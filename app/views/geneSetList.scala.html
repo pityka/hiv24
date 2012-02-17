@@ -1,0 +1,31 @@
+@(geneSets:Map[String,hiv24.GeneSet], queryForm:Form[Option[String]])
+
+@import hiv24._
+@import views.html.helper._
+@import helper.twitterBootstrap._
+
+@main("Predefined gene classes") {
+
+
+
+    
+ @form(routes.Application.queryGeneSets) {
+        
+        @textarea(queryForm("keywords")) 
+        
+        <input type="submit" value="Filter">
+        
+    }
+
+<ul>
+@geneSets.keys.map{ gs =>
+	
+	<li><a href="@routes.Application.showGeneSet(gs)">@gs</a></li>
+
+}
+</ul>
+
+
+
+    
+}

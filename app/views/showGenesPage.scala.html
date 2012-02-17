@@ -1,0 +1,28 @@
+@(genes: Traversable[hiv24.Gene],
+ imageB64: String,
+  enrichmentPerCluster: Traversable[Tuple2[hiv24.Cluster,
+  Traversable[Tuple2[hiv24.GeneSet,hiv24.EnrichmentResult]]]],
+enrichmentPerGeneSet: Traversable[Tuple2[hiv24.GeneSet,Traversable[Tuple2[hiv24.Cluster,hiv24.EnrichmentResult]]]],
+form: Form[Tuple2[String,Option[String]]])
+
+@import hiv24._
+
+@main("Show Genes") {
+
+@enrichmentPerCluster.map{ enrch =>
+
+@views.html.renderClusterEnrichment(enrch)
+
+}
+
+@enrichmentPerGeneSet.map{ enrch =>
+
+@views.html.renderGeneSetEnrichment(enrch)
+
+}
+    
+@views.html.renderGenes(genes,imageB64,form)
+
+
+    
+}

@@ -1,0 +1,42 @@
+@(genes: Traversable[hiv24.Gene], imageB64: String, geneInputForm:Form[Tuple2[String,Option[String]]])
+
+@import hiv24._
+
+@import views.html.helper._
+@import helper.twitterBootstrap._
+
+ <div>   
+<img src="data:image/png;base64,@imageB64" alt="Red dot">
+<div>
+
+@form(routes.Application.listGenesFromForm) {
+    
+    @textarea(geneInputForm("idList"), 'hidden -> true , '_label -> "")
+
+    @inputText(geneInputForm("format"), 'hidden -> true, '_label ->"")
+
+    <input type="submit" value="Get as csv">
+
+   }
+
+</div>
+ <table>
+  <thead>
+    <tr>
+      <th>Ensembl ID</th>
+      <th>Name</th>      
+      <th>Cluster</th>      
+    </tr>
+  </thead>
+  <tbody>
+  	@genes.map { gene =>
+    <tr>
+      <td><a href="@routes.Application.listGenes(gene.name)">@gene.ensembleId</a></td>
+      <td><a href="@routes.Application.listGenes(gene.name)">@gene.name</a></td>
+      <td><a href="@routes.Application.showCluster(gene.cluster.id)">@gene.cluster.id</a></td>      
+    </tr>
+}
+  </tbody>
+</table>
+</div>
+    

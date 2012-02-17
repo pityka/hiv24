@@ -1,0 +1,21 @@
+@(data:  Tuple2[hiv24.GeneSet,Traversable[Tuple2[hiv24.Cluster,hiv24.EnrichmentResult]]])
+
+<h1>GeneSet @data._1.name (@data._1.dataBase) is enriched in the following clusters:</h1>
+
+ <table>
+  <thead>
+    <tr>
+      <th>Cluster</th>
+      <th>-log(P)</th>
+    </tr>
+  </thead>
+  <tbody>
+  	@data._2.map { res =>
+    <tr>
+      <td><a href="@routes.Application.showCluster(res._1.id)">@res._1.id.toString</a></td>
+      <td>@res._2.logP</td>
+    </tr>
+}
+  </tbody>
+</table>
+    

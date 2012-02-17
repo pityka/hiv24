@@ -1,7 +1,29 @@
-@(message: String)
+@(clusters:Traversable[hiv24.Cluster], 
+clusterForm:Form[hiv24.Cluster],
+geneInputForm:Form[Tuple2[String,Option[String]]])
 
-@main("Welcome to Play 2.0") {
+@import views.html.helper._
+@import helper.twitterBootstrap._
+
+
+@main("Welcome") {
     
-    @play20.welcome(message)
+ @form(routes.Application.showClusterFromForm) {
+        
+        @select(clusterForm("clusterID"),clusters.map(x => (x.id.toString,x.id.toString)).toSeq) 
+        
+        <input type="submit" value="Submit">
+        
+    }
+
+   @form(routes.Application.listGenesFromForm) {
+   	
+   	@textarea(geneInputForm("idList"))
+
+   	<input type="submit" value="Submit">
+
+   }
+
+   <a href="@routes.Application.showAllGeneSets">Or browse the predefined gene classes</a>
     
 }
