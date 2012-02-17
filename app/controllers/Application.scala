@@ -119,7 +119,7 @@ object Application extends Controller {
           promiseOfImage.orTimeout( "Oops", 120000 ).map { either =>
             either.fold(
               image => {
-                play.api.cache.Cache.set( "predef"+name, image )
+                play.api.cache.Cache.set( "predef"+name, image, CacheExpiryTime )
                 Ok( views.html.showGenesPage( genes, image, Nil, List( ( geneSet, enrichmentResults ) ), bindGenesToForm( genes ) ) )
               },
               timeout => InternalServerError( "timeout" ) )
@@ -207,6 +207,8 @@ object Application extends Controller {
   }
 
   private val SeparatorCharacters = Set( ':', ',', ';', '\n', '\r', 13.toByte.toChar, 10.toByte.toChar, ' ' )
+
+  private val CacheExpiryTime = 24*60*60 // 1 day, in seconds
 
 
 }

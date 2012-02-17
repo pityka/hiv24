@@ -8,31 +8,53 @@ geneInputForm:Form[Tuple2[String,Option[String]]])
 
 
 @main("Welcome") {
+
+<header class="subhead">
+<h1>What is this</h1>
+<p class="lead">Description</p>
+</header>
     
- @form(routes.Application.showClusterFromForm, 'class->"well form-inline") {
+    <section>
+  <div class="row">
+  <div class="span4">
+ @form(routes.Application.showClusterFromForm, 'class->"form-inline") {
         <fieldset>
         <legend>Look up a cluster</legend>
-        @select(clusterForm("clusterID"),clusters.map(x => (x.id.toString,x.id.toString)).toSeq, '_label -> "") 
+        @select(clusterForm("clusterID"),clusters.map(x => (x.id.toString,x.id.toString)).toSeq, '_label -> "",'_showConstraints -> "false") 
         </fieldset>
         
         <input type="submit" value="Submit" class="btn">
         
     }
+    </div>
 
-   @form(routes.Application.listGenesFromForm, 'class->"well form-inline") {
-   	<fieldset>
-   	<legend>Search for custom set of genes</legend>
-   	@textarea(geneInputForm("idList"), '_label->"",'placeholder->"List of gene IDs",'class->"input-xlarge", 'cols -> "20", 'rows -> "10" )
-   	</fieldset>
+      <div class="span4">
+   @form(routes.Application.listGenesFromForm, 'class->"form-inline") {
+    <fieldset>    
+            <legend>Search a custom set of genes</legend>
 
-   	<input type="submit" value="Submit" class="btn">
+    @textarea(geneInputForm("idList"), '_label->"",'placeholder->"List of gene IDs",'class->"input-xlarge", 'cols -> "20", 'rows -> "10" )
+    </fieldset>
+
+    <input type="submit" value="Submit" class="btn">
 
    }
+   </div>
 
-   <div class="well">
-	<legend>Or browse the predefined gene classes</legend>
-   <a class="btn btn-primary" href="@routes.Application.showAllGeneSets"> Browse </a>
+    <div class="span4">
+    <legend>Browse the predefined classes</legend>
+   <a class="btn btn-primary pull-right" href="@routes.Application.showAllGeneSets"> Browse </a>
+</div>
+       
+    </div>
+       </section>
 
-   </div
+ 
+
+   
+
+   
+ 
+   
     
 }

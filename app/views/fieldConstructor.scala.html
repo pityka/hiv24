@@ -5,6 +5,8 @@
     <div class="controls">
         @elements.input
         <span class="help-inline">@elements.errors.mkString(", ")</span>
+        @if(elements.args.get('_showConstraints) == Some("true")) {
         <span class="help-inline">@elements.infos.mkString(", ")</span> 
+        }
     </div>
 </div>

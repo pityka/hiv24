@@ -7,11 +7,11 @@
     <tr>
       <th>GeneSet Name</th>
       <th>GeneSet DB</th>
-      <th>-log(P)</th>
+      <th>log(P)</th>
     </tr>
   </thead>
   <tbody>
-  	@data._2.map { res =>
+  	@data._2.toSeq.sortBy(_._1.name).map { res =>
     <tr>
       <td><a href="@routes.Application.showGeneSet(res._1.name)">@res._1.name</a></td>
       <td>@res._1.dataBase</td>

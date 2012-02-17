@@ -40,7 +40,7 @@
     </tr>
   </thead>
   <tbody>
-  	@genes.map { gene =>
+  	@genes.toSeq.sortBy(_.name).map { gene =>
     <tr>
       <td><a href="@routes.Application.listGenes(gene.name)">@gene.ensembleId</a></td>
       <td><a href="@routes.Application.listGenes(gene.name)">@gene.name</a></td>

@@ -6,11 +6,11 @@
   <thead>
     <tr>
       <th>Cluster</th>
-      <th>-log(P)</th>
+      <th>log(P)</th>
     </tr>
   </thead>
   <tbody>
-  	@data._2.map { res =>
+  	@data._2.toSeq.sortBy(_._1.id).map { res =>
     <tr>
       <td><a href="@routes.Application.showCluster(res._1.id)">@res._1.id.toString</a></td>
       <td>@res._2.logP</td>
