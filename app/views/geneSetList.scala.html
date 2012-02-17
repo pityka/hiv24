@@ -2,28 +2,38 @@
 
 @import hiv24._
 @import views.html.helper._
-@import helper.twitterBootstrap._
+@implicitField = @{ FieldConstructor(fieldConstructor.f) }
 
 @main("Predefined gene classes") {
 
 
 
     
- @form(routes.Application.queryGeneSets) {
-        
-        @textarea(queryForm("keywords")) 
-        
-        <input type="submit" value="Filter">
+ @form(routes.Application.queryGeneSets, 'class -> "form-inline") {
+        <fieldset>
+        @inputText(queryForm("keywords"), '_label -> "", 'placeholder ->"Filter") 
+        </fieldset>       
         
     }
 
-<ul>
-@geneSets.keys.map{ gs =>
+
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th>Gene classes</th>
+    </tr>
+  </thead>
+  <tbody>
+  @geneSets.keys.toSeq.sorted.map{ gs =>
 	
-	<li><a href="@routes.Application.showGeneSet(gs)">@gs</a></li>
+	<tr>
+      <td><a href="@routes.Application.showGeneSet(gs)">@gs</a></td>      
+    </tr>
 
 }
-</ul>
+    
+  </tbody>
+</table>
 
 
 

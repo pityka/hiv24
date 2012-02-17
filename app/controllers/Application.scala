@@ -14,6 +14,7 @@ import play.api.data._
 
 object Application extends Controller {
 
+  
   val clusterSelectForm = Form(
     mapping(
       "clusterID" -> number )(
@@ -29,6 +30,10 @@ object Application extends Controller {
     "keywords" -> optional( text ) )
 
   val clusters = GeneData.genes.map( _.cluster ).distinct.sortBy( _.id )
+
+  def about = Action{
+    Ok(views.html.about())
+  }
 
   def index = Action {
     Ok( views.html.index( clusters, clusterSelectForm, geneInputForm ) )
@@ -53,7 +58,7 @@ object Application extends Controller {
         keywordstextOption match {
           case None => Redirect( routes.Application.showAllGeneSets )
           case Some( keywordstext ) => {
-            val keywords = mybiotools.fastSplitSetSeparator( keywordstext, Set( ':', ',', ';', '\n', '\r', 13.toByte.toChar, 10.toByte.toChar ) ).distinct.map( _.toUpperCase )
+            val keywords = mybiotools.fastSplitSetSeparator( keywordstext, SeparatorCharacters ).distinct.map( _.toUpperCase )
 
             val selectedGeneSets = GeneData.predefinedGeneSets.filter( x => keywords.exists( y => x._1.indexOf( y ) != -1 ) )
 
@@ -125,7 +130,7 @@ object Application extends Controller {
   }
 
   private def geneSetFromString( text: String ): Set[Gene] = {
-    val ids = mybiotools.fastSplitSetSeparator( text, Set( ':', ',', ';', '\n', '\r', 13.toByte.toChar, 10.toByte.toChar ) ).distinct.map( _.toUpperCase )
+    val ids = mybiotools.fastSplitSetSeparator( text, SeparatorCharacters ).distinct.map( _.toUpperCase )
     ids.map( x => GeneData.genes.find( y => y.ensembleId == x || y.name == x ) ).filter( _.isDefined ).map( _.get ).toSet
   }
 
@@ -135,7 +140,7 @@ object Application extends Controller {
       val writer = factory.get( "image/png" );
       val plot = createTimeLinePlot( genes, name )
       val bs = new ByteArrayOutputStream()
-      writer.write( plot, bs, 1000, 300 );
+      writer.write( plot, bs, 900, 300 );
 
       DatatypeConverter.printBase64Binary( bs.toByteArray )
     }
@@ -197,9 +202,12 @@ object Application extends Controller {
   private def bindGenesToForm( genes: Traversable[Gene] ) = geneInputForm.bind( Map( "idList" -> genes.map( _.ensembleId ).mkString( ":" ), "format" -> "csv" ) )
 
   private def geneSetsFromText( t: String ) = {
-    val ids = mybiotools.fastSplitSetSeparator( t, Set( ':', ',', ';', '\n', '\r', 13.toByte.toChar, 10.toByte.toChar ) ).distinct.map( _.toUpperCase )
+    val ids = mybiotools.fastSplitSetSeparator( t, SeparatorCharacters ).distinct.map( _.toUpperCase )
     GeneData.predefinedGeneSets.filter( x => ids.contains( x._1 ) )
   }
+
+  private val SeparatorCharacters = Set( ':', ',', ';', '\n', '\r', 13.toByte.toChar, 10.toByte.toChar, ' ' )
+
 
 }
 

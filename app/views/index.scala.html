@@ -3,27 +3,36 @@ clusterForm:Form[hiv24.Cluster],
 geneInputForm:Form[Tuple2[String,Option[String]]])
 
 @import views.html.helper._
-@import helper.twitterBootstrap._
+
+@implicitField = @{ FieldConstructor(fieldConstructor.f) }
 
 
 @main("Welcome") {
     
- @form(routes.Application.showClusterFromForm) {
+ @form(routes.Application.showClusterFromForm, 'class->"well form-inline") {
+        <fieldset>
+        <legend>Look up a cluster</legend>
+        @select(clusterForm("clusterID"),clusters.map(x => (x.id.toString,x.id.toString)).toSeq, '_label -> "") 
+        </fieldset>
         
-        @select(clusterForm("clusterID"),clusters.map(x => (x.id.toString,x.id.toString)).toSeq) 
-        
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" class="btn">
         
     }
 
-   @form(routes.Application.listGenesFromForm) {
-   	
-   	@textarea(geneInputForm("idList"))
+   @form(routes.Application.listGenesFromForm, 'class->"well form-inline") {
+   	<fieldset>
+   	<legend>Search for custom set of genes</legend>
+   	@textarea(geneInputForm("idList"), '_label->"",'placeholder->"List of gene IDs",'class->"input-xlarge", 'cols -> "20", 'rows -> "10" )
+   	</fieldset>
 
-   	<input type="submit" value="Submit">
+   	<input type="submit" value="Submit" class="btn">
 
    }
 
-   <a href="@routes.Application.showAllGeneSets">Or browse the predefined gene classes</a>
+   <div class="well">
+	<legend>Or browse the predefined gene classes</legend>
+   <a class="btn btn-primary" href="@routes.Application.showAllGeneSets"> Browse </a>
+
+   </div
     
 }
