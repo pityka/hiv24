@@ -36,7 +36,7 @@ object Application extends Controller {
   }
 
   def index = Action {
-    Ok( views.html.index( clusters, clusterSelectForm, geneInputForm ) )
+    Ok( views.html.index( clusters, clusterSelectForm, geneInputForm,geneSetQueryForm ) )
   }
 
   // GET /geneset

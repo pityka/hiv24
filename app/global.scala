@@ -1,15 +1,35 @@
 import play.api._
+import play.api.mvc._
+import play.api.mvc.Results._
 
-object Global extends GlobalSettings {
+trait GlobalCommon extends GlobalSettings {
 
-  override def onStart(app: Application) {
-    Logger.info("Application has started")
-    Logger.info("Genes loaded: "+models.GeneData.genes.size)
-    Logger.info("Predefined genesets loaded: "+models.GeneData.predefinedGeneSets.size)
-  }  
-  
-  override def onStop(app: Application) {
-    Logger.info("Application shutdown...")
-  }  
-    
+  override def onStart( app: Application ) {
+    Logger.info( "Application has started" )
+    Logger.info( "Genes loaded: "+models.GeneData.genes.size )
+    Logger.info( "Predefined genesets loaded: "+models.GeneData.predefinedGeneSets.size )
+  }
+
+  override def onStop( app: Application ) {
+    Logger.info( "Application shutdown..." )
+  }
+
+}
+
+object GlobalDev extends GlobalCommon
+
+object GlobalProd extends GlobalCommon {
+
+  override def onError( request: RequestHeader, ex: Throwable ) = {
+    InternalServerError
+  }
+
+  override def onHandlerNotFound( request: RequestHeader ) = {
+    NotFound
+  }
+
+  override def onBadRequest( request: RequestHeader, error: String ) = {
+    BadRequest( "Don't try to hack the URI!" )
+  }
+
 }

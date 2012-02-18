@@ -9,13 +9,7 @@
 
 
     
- @form(routes.Application.queryGeneSets, 'class -> "form-inline") {
-        <fieldset>
-        @inputText(queryForm("keywords"), '_label -> "", 'placeholder ->"Filter") 
-        </fieldset>       
-        
-    }
-
+ @views.html.filterForm(queryForm)
 
 <table class="table table-condensed">
   <thead>

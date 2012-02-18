@@ -4,7 +4,7 @@ import PlayProject._
 
 object ApplicationBuild extends Build {
 
-    val appName         = "hiv24"
+    val appName         = "hiv24-web"
     val appVersion      = "1.0-SNAPSHOT"
 
     val appDependencies = Seq(

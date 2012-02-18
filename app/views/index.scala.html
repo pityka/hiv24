@@ -1,6 +1,7 @@
 @(clusters:Traversable[hiv24.Cluster], 
 clusterForm:Form[hiv24.Cluster],
-geneInputForm:Form[Tuple2[String,Option[String]]])
+geneInputForm:Form[Tuple2[String,Option[String]]],
+queryForm:Form[Option[String]])
 
 @import views.html.helper._
 
@@ -43,7 +44,9 @@ geneInputForm:Form[Tuple2[String,Option[String]]])
 
     <div class="span4">
     <legend>Browse the predefined classes</legend>
-   <a class="btn btn-primary pull-right" href="@routes.Application.showAllGeneSets"> Browse </a>
+
+     @views.html.filterForm(queryForm)
+
 </div>
        
     </div>
