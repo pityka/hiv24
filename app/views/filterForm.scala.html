@@ -6,10 +6,11 @@
 @implicitField = @{ FieldConstructor(fieldConstructor.f) }
 
  @form(routes.Application.queryGeneSets, 'class -> "form-inline") {
+
         <fieldset>
         @inputText(queryForm("keywords"), '_label -> "", 'placeholder ->"Filter...") 
         </fieldset>       
 
-           <input type="submit" value="Browse" class="btn btn-primary form-inline" href="@routes.Application.showAllGeneSets"> 
+        <input type="submit" value="Browse" class="btn btn-primary form-inline" href="@routes.Application.showAllGeneSets"> 
         
     }

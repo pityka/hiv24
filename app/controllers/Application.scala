@@ -14,7 +14,6 @@ import play.api.data._
 
 object Application extends Controller {
 
-  
   val clusterSelectForm = Form(
     mapping(
       "clusterID" -> number )(
@@ -31,12 +30,12 @@ object Application extends Controller {
 
   val clusters = GeneData.genes.map( _.cluster ).distinct.sortBy( _.id )
 
-  def about = Action{
-    Ok(views.html.about())
+  def about = Action {
+    Ok( views.html.about() )
   }
 
   def index = Action {
-    Ok( views.html.index( clusters, clusterSelectForm, geneInputForm,geneSetQueryForm ) )
+    Ok( views.html.index( clusters, clusterSelectForm, geneInputForm, geneSetQueryForm ) )
   }
 
   // GET /geneset
@@ -208,8 +207,7 @@ object Application extends Controller {
 
   private val SeparatorCharacters = Set( ':', ',', ';', '\n', '\r', 13.toByte.toChar, 10.toByte.toChar, ' ' )
 
-  private val CacheExpiryTime = 24*60*60 // 1 day, in seconds
-
+  private val CacheExpiryTime = 24 * 60 * 60 // 1 day, in seconds
 
 }
 

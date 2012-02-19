@@ -15,42 +15,42 @@ queryForm:Form[Option[String]])
 <p class="lead">Description</p>
 </header>
     
-    <section>
+<section>
   <div class="row">
-  <div class="span4">
- @form(routes.Application.showClusterFromForm, 'class->"form-inline") {
-        <fieldset>
-        <legend>Look up a cluster</legend>
-        @select(clusterForm("clusterID"),clusters.map(x => (x.id.toString,x.id.toString)).toSeq, '_label -> "",'_showConstraints -> "false") 
-        </fieldset>
-        
-        <input type="submit" value="Submit" class="btn">
-        
-    }
+    <div class="span4">
+      @form(routes.Application.showClusterFromForm, 'class->"form-inline") {
+          <fieldset>
+          <legend>Look up a cluster</legend>
+          @select(clusterForm("clusterID"),clusters.map(x => (x.id.toString,x.id.toString)).toSeq, '_label -> "",'_showConstraints -> "false") 
+          </fieldset>
+          
+          <input type="submit" value="Submit" class="btn">
+          
+      }
     </div>
 
-      <div class="span4">
-   @form(routes.Application.listGenesFromForm, 'class->"form-inline") {
-    <fieldset>    
-            <legend>Search a custom set of genes</legend>
+    <div class="span4">
+     @form(routes.Application.listGenesFromForm, 'class->"form-inline") {
+      <fieldset>    
+              <legend>Search a custom set of genes</legend>
 
-    @textarea(geneInputForm("idList"), '_label->"",'placeholder->"List of gene IDs",'class->"input-xlarge", 'cols -> "20", 'rows -> "10" )
-    </fieldset>
+      @textarea(geneInputForm("idList"), '_label->"",'placeholder->"List of gene IDs",'class->"input-xlarge", 'cols -> "20", 'rows -> "10" )
+      </fieldset>
 
-    <input type="submit" value="Submit" class="btn">
+      <input type="submit" value="Submit" class="btn">
 
-   }
-   </div>
+     }
+    </div>
 
     <div class="span4">
     <legend>Browse the predefined classes</legend>
 
      @views.html.filterForm(queryForm)
 
-</div>
-       
     </div>
-       </section>
+       
+  </div>
+</section>
 
  
 
