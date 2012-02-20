@@ -7,15 +7,15 @@ import java.io.File
 
 object GeneData {
 
-  private val nameFile = Source.fromFile( current.configuration.getString( "hiv24.geneNamesFile" ).get )
+  private val nameFile = Source.fromURL(getClass.getResource( current.configuration.getString( "hiv24.geneNamesFile" ).get ))
 
-  private val expressionsFile = Source.fromFile( current.configuration.getString( "hiv24.geneExpressionsFile" ).get )
+  private val expressionsFile = Source.fromURL(getClass.getResource( current.configuration.getString( "hiv24.geneExpressionsFile" ).get ))
 
-  private val clustersFile = Source.fromFile( current.configuration.getString( "hiv24.clustersFile" ).get )
+  private val clustersFile = Source.fromURL( getClass.getResource(current.configuration.getString( "hiv24.clustersFile" ).get ))
 
-  private val enrichmentTestsFile = Source.fromFile( current.configuration.getString( "hiv24.enrichmentTestsFile" ).get )
+  private val enrichmentTestsFile = Source.fromURL( getClass.getResource(current.configuration.getString( "hiv24.enrichmentTestsFile" ).get ))
 
-  private val geneSetFiles = play.api.Configuration.unapply( current.configuration ).get.getStringList( "hiv24.predefinedGeneSets" ).toArray.toList.asInstanceOf[List[String]].map( x => x -> Source.fromFile( x ) )
+  private val geneSetFiles = play.api.Configuration.unapply( current.configuration ).get.getStringList( "hiv24.predefinedGeneSets" ).toArray.toList.asInstanceOf[List[String]].map( x => x -> Source.fromURL(getClass.getResource( x) ) )
 
   val genes = readNameExpressionClusterFiles( nameFile, expressionsFile, clustersFile )
 
