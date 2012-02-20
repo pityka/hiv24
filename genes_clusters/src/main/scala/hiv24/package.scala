@@ -201,7 +201,8 @@ package object hiv24 {
       // rendererX.setSetting(AxisRenderer.LABEL_DISTANCE,32)
 
       val titlefont = new Font( null, Font.PLAIN, 12 )
-      plotHIV.setSetting( Plot.TITLE, title+" : Gene expression pattern" );
+
+      plotHIV.setSetting( Plot.TITLE, title.grouped(30).mkString("\n")+" : Gene expression pattern" );
       plotHIV.setSetting( Plot.TITLE_FONT, titlefont )
 
       plotHIV
@@ -301,7 +302,8 @@ package object hiv24 {
 
     plot.getNavigator().setDirection( XYNavigationDirection.VERTICAL );
 
-      plot.setSetting( Plot.TITLE, title+" : "+genes.size+" genes" );
+
+      plot.setSetting( Plot.TITLE, title.grouped(30).mkString("\n")+" : "+genes.size+" genes" );
 
 
     plot

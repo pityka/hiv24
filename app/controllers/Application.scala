@@ -59,7 +59,7 @@ object Application extends Controller {
           case Some( keywordstext ) => {
             val keywords = mybiotools.fastSplitSetSeparator( keywordstext, SeparatorCharacters ).distinct.map( _.toUpperCase )
 
-            val selectedGeneSets = GeneData.predefinedGeneSets.filter( x => keywords.exists( y => x._1.indexOf( y ) != -1 ) )
+            val selectedGeneSets = GeneData.predefinedGeneSets.filter( x => keywords.exists( y => x._1.toUpperCase.indexOf( y ) != -1 ) )
 
             Ok( views.html.geneSetList( selectedGeneSets, geneSetQueryForm.bindFromRequest ) )
           }
@@ -130,7 +130,7 @@ object Application extends Controller {
 
   private def geneSetFromString( text: String ): Set[Gene] = {
     val ids = mybiotools.fastSplitSetSeparator( text, SeparatorCharacters ).distinct.map( _.toUpperCase )
-    ids.map( x => GeneData.genes.find( y => y.ensembleId == x || y.name == x ) ).filter( _.isDefined ).map( _.get ).toSet
+    ids.map( x => GeneData.genes.find( y => y.ensembleId.toUpperCase == x || y.name.toUpperCase == x ) ).filter( _.isDefined ).map( _.get ).toSet
   }
 
   private def getImagePromise( genes: Traversable[Gene], name: String ): Promise[String] = {
@@ -202,7 +202,7 @@ object Application extends Controller {
 
   private def geneSetsFromText( t: String ) = {
     val ids = mybiotools.fastSplitSetSeparator( t, SeparatorCharacters ).distinct.map( _.toUpperCase )
-    GeneData.predefinedGeneSets.filter( x => ids.contains( x._1 ) )
+    GeneData.predefinedGeneSets.filter( x => ids.contains( x._1.toUpperCase ) )
   }
 
   private val SeparatorCharacters = Set( ':', ',', ';', '\n', '\r', 13.toByte.toChar, 10.toByte.toChar, ' ' )
