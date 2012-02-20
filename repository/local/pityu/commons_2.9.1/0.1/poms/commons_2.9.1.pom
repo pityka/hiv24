@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>pityu</groupId>
+    <artifactId>commons_2.9.1</artifactId>
+    <packaging>jar</packaging>
+    <description>commons</description>
+    <version>0.1</version>
+    <name>commons</name>
+    <organization>
+        <name>pityu</name>
+    </organization>
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.9.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>r09</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.efficient-java-matrix-library</groupId>
+            <artifactId>ejml</artifactId>
+            <version>0.17</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+    <repositories>
+        <repository>
+            <id>AkkaRepository</id>
+            <name>Akka Repository</name>
+            <url>http://akka.io/repository/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>GuiceyFruite</id>
+            <name>GuiceyFruite</name>
+            <url>http://guiceyfruit.googlecode.com/svn/repo/releases/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>Twitter</id>
+            <name>Twitter</name>
+            <url>http://maven.twttr.com/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>TypesafeRepo</id>
+            <name>Typesafe Repo</name>
+            <url>http://repo.typesafe.com/typesafe/releases/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>Freehep</id>
+            <name>Freehep</name>
+            <url>http://java.freehep.org/maven2/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>ScalaToolsMaven2Repository</id>
+            <name>Scala-Tools Maven2 Repository</name>
+            <url>http://scala-tools.org/repo-releases/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+</project>
