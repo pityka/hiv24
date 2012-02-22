@@ -207,7 +207,7 @@ object Application extends Controller {
 
   private val SeparatorCharacters = Set( ':', ',', ';', '\n', '\r', 13.toByte.toChar, 10.toByte.toChar, ' ' )
 
-  private val CacheExpiryTime = current.configuration.getInt( "hiv24.cacheExpiryInSec", 60*60 )
+  private val CacheExpiryTime = current.configuration.getInt( "hiv24.cacheExpiryInSec" ).getOrElse(60*60)
 
 }
 
