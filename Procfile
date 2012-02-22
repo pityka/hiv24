@@ -1,1 +1,1 @@
-web: target/start -Dhttp.port=${PORT} -Xms64M -Xmx400M -server
+web: target/start -Dhttp.port=${PORT} ${JAVA_OPTS}
