@@ -1,7 +1,4 @@
 repository/
 lib/
 lib_managed/
-project/
-target/scala*
-target/streams/
 logs/
