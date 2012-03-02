@@ -44,10 +44,10 @@ package object hiv24 {
         20 -> expression( Symbol( "20M" ) ).toDouble,
         22 -> expression( Symbol( "22M" ) ).toDouble )
 
-      val cluster = Cluster( clusterFileContent( id )( 'Cluster_ID ).toInt )
-      val revTr = clusterFileContent( id.toString )( Symbol( "RevTr." ) ).toDouble
-      val intgr = clusterFileContent( id.toString )( Symbol( "Intgr." ) ).toDouble
-      val late = clusterFileContent( id.toString )( Symbol( "Late" ) ).toDouble
+      val cluster = clusterFileContent.get( id ).map( x => Cluster( x.apply( 'Cluster_ID ).toInt ))
+      val revTr = clusterFileContent.get( id.toString ).map(_.apply( Symbol( "RevTr." ) ).toDouble)
+      val intgr = clusterFileContent.get( id.toString ).map(_.apply( Symbol( "Intgr." ) ).toDouble)
+      val late = clusterFileContent.get( id.toString ).map(_.apply( Symbol( "Late" ) ).toDouble)
 
       Gene( id.toInt, ensemble, sym, exprMapMock, exprMapHIV, cluster, revTr, intgr, late )
     }.toList
@@ -260,9 +260,9 @@ package object hiv24 {
     val choiceFormat = new java.text.ChoiceFormat( limits, choices );
     // Create example data
     val data = new DataTable( classOf[RichDouble], classOf[RichDouble], classOf[RichDouble] );
-    genes.foreach { gene =>
+    genes.filter(_.cluster.isDefined).foreach { gene =>
 
-      data.add( new RichDouble( gene.revtr ), new RichDouble( gene.intgr ), new RichDouble( gene.late ) );
+      data.add( new RichDouble( gene.revtr.get ), new RichDouble( gene.intgr.get ), new RichDouble( gene.late.get ) );
     }
 
     // Create new box-and-whisker plot

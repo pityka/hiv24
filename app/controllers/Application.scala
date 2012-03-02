@@ -28,7 +28,7 @@ object Application extends Controller {
   val geneSetQueryForm = Form(
     "keywords" -> optional( text ) )
 
-  val clusters = GeneData.genes.map( _.cluster ).distinct.sortBy( _.id )
+  val clusters = GeneData.genes.filter(_.cluster.isDefined).map( _.cluster.get ).distinct.sortBy( _.id )
 
   def about = Action {
     Ok( views.html.about() )
@@ -169,7 +169,7 @@ object Application extends Controller {
   }
 
   private def showClusterHelper( cluster: Cluster ): Result = {
-    val genes = GeneData.genes.filter( _.cluster == cluster )
+    val genes = GeneData.genes.filter( _.cluster == Some(cluster) )
     if ( genes.size > 0 ) {
       val promiseOfImage: Promise[String] = play.api.cache.Cache.get( cluster.id.toString ) match {
         case Some( x ) => Promise.pure( x.asInstanceOf[String] )
@@ -196,7 +196,7 @@ object Application extends Controller {
     }
   }
 
-  private def renderCSV( genes: Traversable[Gene] ) = genes.map( g => List( g.ensembleId, g.name, g.cluster.id ).mkString( "," ) ).mkString( "\n" )
+  private def renderCSV( genes: Traversable[Gene] ) = genes.map( g => List( g.ensembleId, g.name, g.cluster.map(_.id).getOrElse(-1) ).mkString( "," ) ).mkString( "\n" )
 
   private def bindGenesToForm( genes: Traversable[Gene] ) = geneInputForm.bind( Map( "idList" -> genes.map( _.ensembleId ).mkString( ":" ), "format" -> "csv" ) )
 

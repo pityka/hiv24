@@ -44,7 +44,10 @@
     <tr>
       <td><a href="@routes.Application.listGenes(gene.name)">@gene.ensembleId</a></td>
       <td><a href="@routes.Application.listGenes(gene.name)">@gene.name</a></td>
-      <td><a href="@routes.Application.showCluster(gene.cluster.id)">@gene.cluster.id</a></td>      
+      <td>@gene.cluster.map{ cluster =>
+        <a href="@routes.Application.showCluster(cluster.id)">@cluster.id</a>
+      }.getOrElse("NA")
+      </td>      
     </tr>
 }
   </tbody>

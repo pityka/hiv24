@@ -55,7 +55,7 @@ class FileReadingTestSuite extends FunSuite {
         18 ->   7.8892,
         20 ->   10.018,
         22 ->   10.737,
-        24 -> 8.1218),Cluster(8),5.7031,1.648,7.773),
+        24 -> 8.1218),Some(Cluster(8)),Some(5.7031),Some(1.648),Some(7.773)),
 	      Gene(2,"ASP","ASP",Map(
               4 -> 0,
               6 -> 0,
@@ -76,7 +76,7 @@ class FileReadingTestSuite extends FunSuite {
         18 ->   2.6093,
         20 ->   2.5543,
         22 ->   2.3204,
-        24 -> 2.9642),Cluster(6),-1.3568,1.6485,2.3129))
+        24 -> 2.9642),Some(Cluster(6)),Some(-1.3568),Some(1.6485),Some(2.3129)))
 
         val expectedGeneSets = List(GeneSet("set1","dbname",expected.toSet),
         GeneSet("set2","dbname",expected.toSet))
