@@ -176,7 +176,7 @@ object Application extends Controller {
         case None => getImagePromise( genes, "C"+cluster.id.toString )
       }
 
-      val enrichmentResults: Traversable[Tuple2[GeneSet, EnrichmentResult]] = GeneData.enrichmentTests.filter( tup => tup._1._1 == cluster.id ).map { tup =>
+      val enrichmentResults: Traversable[Tuple2[GeneSet, EnrichmentResult]] = GeneData.enrichmentTests.filter( tup => tup._1._1 == cluster ).map { tup =>
         val gset = GeneData.predefinedGeneSets.get( tup._1._2 )
         gset.map( x => x -> tup._2 )
       }.filter( _.isDefined ).map( _.get )
