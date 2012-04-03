@@ -7,11 +7,14 @@ package object hiv24 {
   def readNameExpressionClusterFiles(
     name: Source,
     expr: Source,
-    clusterFile: Source ): List[Gene] = {
+    clusterFile: Source,
+    clusterNameFile:Source ): List[Gene] = {
     val names = readTableAsMap[String]( name, key = 'Pej_ID, sep = "\\t+" )
     val expressions = readTableAsMap[String]( expr, key = 'Pej_ID, sep = "\\t+" )
 
     val clusterFileContent = readTableAsMap[String]( clusterFile, key = 'Pej_ID, sep = "\\t+" )
+
+    val clusterNameFileContent = readTableAsMap[Int]( clusterNameFile, key = 'Cluster_ID, sep = "\\t+" )( _.toInt )
 
     names.map { geneName =>
       val id = geneName._1
@@ -44,39 +47,41 @@ package object hiv24 {
         20 -> expression( Symbol( "20M" ) ).toDouble,
         22 -> expression( Symbol( "22M" ) ).toDouble )
 
-      val cluster = clusterFileContent.get( id ).map( x => Cluster( x.apply( 'Cluster_ID ).toInt ))
-      val revTr = clusterFileContent.get( id.toString ).map(_.apply( Symbol( "RevTr." ) ).toDouble)
-      val intgr = clusterFileContent.get( id.toString ).map(_.apply( Symbol( "Intgr." ) ).toDouble)
-      val late = clusterFileContent.get( id.toString ).map(_.apply( Symbol( "Late" ) ).toDouble)
+      val cluster = clusterFileContent.get( id ).map( x => Cluster( x.apply( 'Cluster_ID ).toInt, clusterNameFileContent(x.apply( 'Cluster_ID ).toInt)('Cluster_Name)) )
+      val revTr = clusterFileContent.get( id.toString ).map( _.apply( Symbol( "RevTr." ) ).toDouble )
+      val intgr = clusterFileContent.get( id.toString ).map( _.apply( Symbol( "Intgr." ) ).toDouble )
+      val late = clusterFileContent.get( id.toString ).map( _.apply( Symbol( "Late" ) ).toDouble )
 
       Gene( id.toInt, ensemble, sym, exprMapMock, exprMapHIV, cluster, revTr, intgr, late )
     }.toList
   }
 
   def readGeneSets( geneSetFile: Source, genes: Traversable[Gene], dbName: String ): List[GeneSet] = {
-    val genesMap = genes.groupBy(_.pejId).mapValues(_.head)
+    val genesMap = genes.groupBy( _.pejId ).mapValues( _.head )
     geneSetFile.getLines.map { line =>
-      val spl = mybiotools.fastSplitSeparator(line,'\t')
+      val spl = mybiotools.fastSplitSeparator( line, '\t' )
       val name = spl.head
-      val set = spl.tail.map{ pejid => 
+      val set = spl.tail.map { pejid =>
         val pejidInt = pejid.toInt
-        genesMap.get(pejidInt) }.filter( _.isDefined ).map( _.get ).toSet
+        genesMap.get( pejidInt )
+      }.filter( _.isDefined ).map( _.get ).toSet
       GeneSet( name, dbName, set )
     }.toList
   }
 
-  def readEnrichmentFile( enrichmentFile: Source ): Map[Tuple2[Int, String], EnrichmentResult] = {
+  def readEnrichmentFile( enrichmentFile: Source ): Map[Tuple2[Cluster, String], EnrichmentResult] = {
     Map( readTable( enrichmentFile, header = true, sep = "\\t+" ).map { line =>
       val enrich = EnrichmentResult( logP = line( Symbol( "log10(Pval)" ) ) match {
         case x if x == "-Inf" => Double.MinValue
         case x if x == "Inf" => Double.MaxValue
-        case x => x.toDouble},
+        case x => x.toDouble
+      },
         qVal = line( 'Qval ).toDouble,
         countInBackground = line( 'CountinBackground ).toDouble,
         expectedCount = line( 'ExpectedCount ).toDouble,
         countInCluster = line( 'CountinCluster ).toDouble,
         sourceURL = line( 'SourceUrl ) )
-      ( line( 'ClusterID ).toInt, line( 'SetName ) ) -> enrich
+      ( Cluster(line( 'ClusterID ).toInt,line('ClusterName)), line( 'SetName ) ) -> enrich
     }.toSeq: _* )
 
   }
@@ -109,19 +114,19 @@ package object hiv24 {
 
   def createTimeLinePlot( genes: Traversable[Gene], title: String = "" ): AbstractDrawable = {
 
-    def createPlot( dat: Traversable[Map[Int,Double]], maxY: Double, minY: Double, title: String ): XYPlot = {
+    def createPlot( dat: Traversable[Map[Int, Double]], maxY: Double, minY: Double, title: String ): XYPlot = {
 
       val seriesHIV = dat.map { gene =>
-      val ser = new DataTable( classOf[scala.runtime.RichInt], classOf[scala.runtime.RichDouble] )
-      gene.toSeq.sortBy( _._1 ).foreach( tuple => ser.add( new RichInt( tuple._1 ), new RichDouble( tuple._2 ) ) )
+        val ser = new DataTable( classOf[scala.runtime.RichInt], classOf[scala.runtime.RichDouble] )
+        gene.toSeq.sortBy( _._1 ).foreach( tuple => ser.add( new RichInt( tuple._1 ), new RichDouble( tuple._2 ) ) )
 
-      ser
-    }
+        ser
+      }
 
       val maxX = dat.map( x => x.map( _._1 ).toList ).flatten.max
       val minX = dat.map( x => x.map( _._1 ).toList ).flatten.min
 
-      val avgHIV = dat.head.map(_._1).map { i =>
+      val avgHIV = dat.head.map( _._1 ).map { i =>
         val sum = dat.foldLeft( 0.0 )( ( x, y ) => x + y( i ) )
         i -> sum / dat.size.toDouble
       }
@@ -177,8 +182,6 @@ package object hiv24 {
       plotarea.setSetting( XYPlotArea2D.GRID_MINOR_X, false )
       plotarea.setSetting( XYPlotArea2D.GRID_MINOR_Y, false )
 
-      
-
       val rendererY = plotHIV.getAxisRenderer( XYPlot.AXIS_Y );
       rendererY.setSetting( AxisRenderer.INTERSECTION, -Double.MaxValue );
       val rendererX = plotHIV.getAxisRenderer( XYPlot.AXIS_X );
@@ -202,41 +205,39 @@ package object hiv24 {
 
       val titlefont = new Font( null, Font.PLAIN, 12 )
 
-      plotHIV.setSetting( Plot.TITLE, title.grouped(30).mkString("\n")+" : Gene expression pattern" );
+      plotHIV.setSetting( Plot.TITLE, title.grouped( 30 ).mkString( "\n" )+" : Gene expression pattern" );
       plotHIV.setSetting( Plot.TITLE_FONT, titlefont )
 
       plotHIV
     }
 
-    
-
     val maxY = genes.map( x => x.expressionHIV.map( _._2 ).toList ::: x.expressionMock.map( _._2 ).toList ).flatten.max
     val minY = genes.map( x => x.expressionHIV.map( _._2 ).toList ::: x.expressionMock.map( _._2 ).toList ).flatten.min
 
-    val hivplot = createPlot( genes.map(_.expressionHIV), maxY, minY, "HIV" )
-    val mockplot = createPlot( genes.map(_.expressionMock), maxY, minY, "Mock" )
-    mockplot.setAxis(XYPlot.AXIS_Y,hivplot.getAxis(XYPlot.AXIS_Y))
+    val hivplot = createPlot( genes.map( _.expressionHIV ), maxY, minY, "HIV" )
+    val mockplot = createPlot( genes.map( _.expressionMock ), maxY, minY, "Mock" )
+    mockplot.setAxis( XYPlot.AXIS_Y, hivplot.getAxis( XYPlot.AXIS_Y ) )
 
-    val rendererYHIV = hivplot.getAxisRenderer(XYPlot.AXIS_Y)
-    rendererYHIV.setSetting(AxisRenderer.TICK_LABELS,false)
-    rendererYHIV.setSetting(AxisRenderer.SHAPE_VISIBLE,false)
-    rendererYHIV.setSetting(AxisRenderer.TICKS,false)
-    rendererYHIV.setSetting(AxisRenderer.LABEL,"")
-    rendererYHIV.setSetting(AxisRenderer.LABEL_DISTANCE,0)
+    val rendererYHIV = hivplot.getAxisRenderer( XYPlot.AXIS_Y )
+    rendererYHIV.setSetting( AxisRenderer.TICK_LABELS, false )
+    rendererYHIV.setSetting( AxisRenderer.SHAPE_VISIBLE, false )
+    rendererYHIV.setSetting( AxisRenderer.TICKS, false )
+    rendererYHIV.setSetting( AxisRenderer.LABEL, "" )
+    rendererYHIV.setSetting( AxisRenderer.LABEL_DISTANCE, 0 )
 
     val insetsTop = 20.0
-      val insetsLeft = 60.0
-      val insetsBottom = 60.0
-      val insetsRight = 20.0
-      hivplot.setInsets( new Insets2D.Double(
-        insetsTop, 5, insetsBottom, insetsRight ) );
-        mockplot.setInsets( new Insets2D.Double(
-        insetsTop, insetsLeft, insetsBottom, 0 ) );
+    val insetsLeft = 60.0
+    val insetsBottom = 60.0
+    val insetsRight = 20.0
+    hivplot.setInsets( new Insets2D.Double(
+      insetsTop, 5, insetsBottom, insetsRight ) );
+    mockplot.setInsets( new Insets2D.Double(
+      insetsTop, insetsLeft, insetsBottom, 0 ) );
 
-    val boxplot= createBoxPlot(genes,title)
+    val boxplot = createBoxPlot( genes, title )
 
     val container = new DrawableContainer( new TableLayout( 3 ) );
-    container.add(boxplot)
+    container.add( boxplot )
     container.add( mockplot );
     container.add( hivplot );
 
@@ -260,7 +261,7 @@ package object hiv24 {
     val choiceFormat = new java.text.ChoiceFormat( limits, choices );
     // Create example data
     val data = new DataTable( classOf[RichDouble], classOf[RichDouble], classOf[RichDouble] );
-    genes.filter(_.cluster.isDefined).foreach { gene =>
+    genes.filter( _.cluster.isDefined ).foreach { gene =>
 
       data.add( new RichDouble( gene.revtr.get ), new RichDouble( gene.intgr.get ), new RichDouble( gene.late.get ) );
     }
@@ -279,14 +280,11 @@ package object hiv24 {
     rendererX.setSetting( AxisRenderer.TICKS_FONT, tickfont )
     plot.setSetting( Plot.TITLE_FONT, tickfont )
 
-      
-
     val rendererY = plot.getAxisRenderer( XYPlot.AXIS_Y );
-        rendererY.setSetting( AxisRenderer.TICKS_FONT, tickfont )
-        rendererY.setSetting( AxisRenderer.LABEL_FONT, tickfont )
+    rendererY.setSetting( AxisRenderer.TICKS_FONT, tickfont )
+    rendererY.setSetting( AxisRenderer.LABEL_FONT, tickfont )
 
     rendererY.setSetting( AxisRenderer.TICKS_MINOR, false )
-
 
     rendererY.setSetting( AxisRenderer.LABEL, "Relevance level" )
 
@@ -302,9 +300,7 @@ package object hiv24 {
 
     plot.getNavigator().setDirection( XYNavigationDirection.VERTICAL );
 
-
-      plot.setSetting( Plot.TITLE, title.grouped(30).mkString("\n")+" : "+genes.size+" genes" );
-
+    plot.setSetting( Plot.TITLE, title.grouped( 30 ).mkString( "\n" )+" : "+genes.size+" genes" );
 
     plot
   }

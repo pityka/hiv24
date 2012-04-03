@@ -23,13 +23,19 @@ class FileReadingTestSuite extends FunSuite {
 |2	ASP	ASP
 """.stripMargin
 
+    val clnames = """|Cluster_ID	Cluster_Name
+|8	AAAA
+|6	BBBB
+""".stripMargin
+
     val genesettxt = """|set1	1	2	3
 |set2	2	3	1""".stripMargin
 
     val genes = readNameExpressionClusterFiles(
       name = Source.fromString( namestxt ),
       expr = Source.fromString( exprtxt ),
-      clusterFile = Source.fromString( clusterstxt ) )
+      clusterFile = Source.fromString( clusterstxt ),
+      clusterNameFile=Source.fromString(clnames) )
 
     val geneSets = readGeneSets(Source.fromString(genesettxt),genes,"dbname")
 
@@ -55,7 +61,7 @@ class FileReadingTestSuite extends FunSuite {
         18 ->   7.8892,
         20 ->   10.018,
         22 ->   10.737,
-        24 -> 8.1218),Some(Cluster(8)),Some(5.7031),Some(1.648),Some(7.773)),
+        24 -> 8.1218),Some(Cluster(8,"AAAA")),Some(5.7031),Some(1.648),Some(7.773)),
 	      Gene(2,"ASP","ASP",Map(
               4 -> 0,
               6 -> 0,
@@ -76,7 +82,7 @@ class FileReadingTestSuite extends FunSuite {
         18 ->   2.6093,
         20 ->   2.5543,
         22 ->   2.3204,
-        24 -> 2.9642),Some(Cluster(6)),Some(-1.3568),Some(1.6485),Some(2.3129)))
+        24 -> 2.9642),Some(Cluster(6,"BBBB")),Some(-1.3568),Some(1.6485),Some(2.3129)))
 
         val expectedGeneSets = List(GeneSet("set1","dbname",expected.toSet),
         GeneSet("set2","dbname",expected.toSet))
@@ -88,13 +94,13 @@ class FileReadingTestSuite extends FunSuite {
   }
 
   test("read enrichment file") {
-      val txt = "|DataBase\tClusterID\tSetName\tlog10(Pval)\tQval\tCountinBackground\tExpectedCount\tCountinCluster\tSourceUrl\nJagerlist.gmt GeneSets\t3\tJagersList\t-2.8\t0.00164\t381\t77.19\t100\tJagersList\nJagerlist.gmt GeneSets\t12\tJagersList\t-2.1\t0.00720\t381\t15.56\t25\tJagersList"
+      val txt = "|DataBase\tClusterName\tSetName\tlog10(Pval)\tQval\tCountinBackground\tExpectedCount\tCountinCluster\tSourceUrl\tClusterID\nJagerlist.gmt GeneSets\tAAAA\tJagersList\t-2.8\t0.00164\t381\t77.19\t100\tJagersList\t3\nJagerlist.gmt GeneSets\tBBBB\tJagersList\t-2.1\t0.00720\t381\t15.56\t25\tJagersList\t12"
 
     val r = readEnrichmentFile(Source.fromString(txt))
 
     val expected = Map(
-        (3,"JagersList") -> EnrichmentResult(-2.8,0.00164,381,77.19,100,"JagersList"),
-        (12,"JagersList") -> EnrichmentResult(-2.1,0.00720,381,15.56,25,"JagersList"))
+        (Cluster(3,"AAAA"),"JagersList") -> EnrichmentResult(-2.8,0.00164,381,77.19,100,"JagersList"),
+        (Cluster(12,"BBBB"),"JagersList") -> EnrichmentResult(-2.1,0.00720,381,15.56,25,"JagersList"))
     
     expect(expected)(r)
   }

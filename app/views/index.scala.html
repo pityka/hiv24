@@ -35,7 +35,7 @@ The infected cell (SupT1 T cell) was subject of universal infection with a HIV-b
       @form(routes.Application.showClusterFromForm, 'class->"form-inline") {
           <fieldset>
           <legend>Look up a cluster</legend>
-          @select(clusterForm("clusterID"),clusters.map(x => (x.id.toString,x.id.toString)).toSeq, '_label -> "",'_showConstraints -> "false") 
+          @select(clusterForm("clusterID"),clusters.map(x => (x.id.toString,x.name.toString)).toSeq, '_label -> "",'_showConstraints -> "false") 
           </fieldset>
           
           <input type="submit" value="Submit" class="btn">

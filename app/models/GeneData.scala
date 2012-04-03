@@ -4,6 +4,7 @@ import play.api.Play.current
 import scala.io.Source
 import hiv24._
 import java.io.File
+import mybiotools._
 
 object GeneData {
 
@@ -17,7 +18,9 @@ object GeneData {
 
   private val geneSetFiles = play.api.Configuration.unapply( current.configuration ).get.getStringList( "hiv24.predefinedGeneSets" ).toArray.toList.asInstanceOf[List[String]].map( x => x -> Source.fromURL(getClass.getResource( x) ) )
 
-  val genes = readNameExpressionClusterFiles( nameFile, expressionsFile, clustersFile )
+  private val clusterNameFile = Source.fromURL( getClass.getResource(current.configuration.getString( "hiv24.clusterNameFile" ).get ))
+
+  val genes = readNameExpressionClusterFiles( nameFile, expressionsFile, clustersFile, clusterNameFile )
 
   val predefinedGeneSets: Map[String, GeneSet] = geneSetFiles.map { x =>
     val geneSetFile = x._2
@@ -26,5 +29,8 @@ object GeneData {
   }.flatten.groupBy( _.name ).mapValues( _.head )
 
   val enrichmentTests = readEnrichmentFile( enrichmentTestsFile )
+
+  val clusterNames = readTableAsMap[Int]( Source.fromURL( getClass.getResource(current.configuration.getString( "hiv24.clusterNameFile" ).get )), key = 'Cluster_ID, sep = "\\t+" )( _.toInt).mapValues(x => x('Cluster_Name))
+
 
 }

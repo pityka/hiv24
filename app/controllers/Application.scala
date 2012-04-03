@@ -17,7 +17,7 @@ object Application extends Controller {
   val clusterSelectForm = Form(
     mapping(
       "clusterID" -> number )(
-        ( id ) => Cluster( id ) )(
+        ( id ) => Cluster( id, GeneData.clusterNames(id) ) )(
           ( cl: Cluster ) => Some( cl.id ) ) )
 
   val geneInputForm = Form(
@@ -79,7 +79,7 @@ object Application extends Controller {
 
   // GET /cluster/:ID
   def showCluster( id: Int ) = Action {
-    val cluster = Cluster( id )
+    val cluster = Cluster( id, GeneData.clusterNames(id) )
     showClusterHelper( cluster )
   }
 
@@ -110,7 +110,7 @@ object Application extends Controller {
         }
 
         val enrichmentResults: Traversable[Tuple2[Cluster, EnrichmentResult]] = GeneData.enrichmentTests.filter( tup => tup._1._2 == geneSet.name ).map { tup =>
-          val cl = clusters.find( _.id == tup._1._1 )
+          val cl = clusters.find( _.id == tup._1._1.id )
           cl.map( x => x -> tup._2 )
         }.filter( _.isDefined ).map( _.get )
 
@@ -196,7 +196,7 @@ object Application extends Controller {
     }
   }
 
-  private def renderCSV( genes: Traversable[Gene] ) = genes.map( g => List( g.ensembleId, g.name, g.cluster.map(_.id).getOrElse(-1) ).mkString( "," ) ).mkString( "\n" )
+  private def renderCSV( genes: Traversable[Gene] ) = genes.map( g => List( g.ensembleId, g.name, g.cluster.map(_.name).getOrElse(-1) ).mkString( "," ) ).mkString( "\n" )
 
   private def bindGenesToForm( genes: Traversable[Gene] ) = geneInputForm.bind( Map( "idList" -> genes.map( _.ensembleId ).mkString( ":" ), "format" -> "csv" ) )
 

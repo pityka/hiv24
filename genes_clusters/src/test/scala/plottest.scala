@@ -20,10 +20,16 @@ class PlotTestSuite extends FunSuite {
 |2	ASP	ASP
 """.stripMargin
 
+    val clnames = """|Cluster_ID	Cluster_Name
+|8	AAAA
+|6	BBBB
+""".stripMargin
+
     val genes = readNameExpressionClusterFiles(
       name = Source.fromString( namestxt ),
       expr = Source.fromString( exprtxt ),
-      clusterFile = Source.fromString( clusterstxt ) )
+      clusterFile = Source.fromString( clusterstxt ),
+      clusterNameFile=Source.fromString(clnames) )
 
     val outfile = getClass.getResource( "/" ).getPath+"/timeline.pdf"
 
