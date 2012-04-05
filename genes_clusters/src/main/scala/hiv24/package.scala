@@ -189,7 +189,7 @@ package object hiv24 {
       val xAxis = plotHIV.getAxis( XYPlot.AXIS_X )
       // xAxis.setRange( 0, 26 )
       val yAxis = plotHIV.getAxis( XYPlot.AXIS_Y )
-      yAxis.setRange( minY - 2, maxY + 2 )
+      yAxis.setRange( -5, +5 )
 
       rendererX.setSetting( AxisRenderer.LABEL, "Time (hours)" )
       rendererY.setSetting( AxisRenderer.LABEL, "Fold change (log2)" )
@@ -272,6 +272,9 @@ package object hiv24 {
 
     // Format plot
     plot.setInsets( new Insets2D.Double( 20.0, 100.0, 60.0, 20.0 ) );
+
+      val yAxis = plot.getAxis( XYPlot.AXIS_Y )
+      yAxis.setRange( -1, +1 )
 
     // Format axes
     val rendererX = plot.getAxisRenderer( XYPlot.AXIS_X )
