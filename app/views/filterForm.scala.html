@@ -8,7 +8,7 @@
  @form(routes.Application.queryGeneSets, 'class -> "form-inline") {
 
         <fieldset>
-        @inputText(queryForm("keywords"), '_label -> "", 'placeholder ->"Filter...") 
+        @inputText(queryForm("keywords"), '_label -> "To see the whole list of predefined classes, just click the browse button", 'placeholder ->"type a keyword to filter") 
         </fieldset>       
 
         <input type="submit" value="Browse" class="btn btn-primary form-inline" href="@routes.Application.showAllGeneSets"> 
