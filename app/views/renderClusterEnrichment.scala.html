@@ -5,6 +5,23 @@
  <table class="table table-striped table-bordered">
   <thead>
     <tr>
+      <th>GeneSet DB</th>
+      <th>Hit Count</th>
+    </tr>
+  </thead>
+  <tbody>
+  @data._2.toSeq.sortBy(_._1.name).groupBy(_._1.dataBase).map { db =>
+  <tr>
+    <td>@db._1</td>
+    <td>@db._2.size</td>
+  </tr>
+}
+</tbody>
+</table>
+
+ <table class="table table-striped table-bordered">
+  <thead>
+    <tr>
       <th>GeneSet Name</th>
       <th>GeneSet DB</th>
       <th>log(P)</th>

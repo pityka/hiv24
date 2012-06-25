@@ -40,13 +40,13 @@ object Application extends Controller {
 
   // GET /geneset
   def showAllGeneSets = Action {
-    Ok( views.html.geneSetList( GeneData.predefinedGeneSets, geneSetQueryForm ) )
+    Ok( views.html.geneSetList( GeneData.predefinedGeneSets.mapValues(gs => gs -> whichClustersAreEnrichedInGeneSet(gs)), geneSetQueryForm ) )
   }
 
   // GET /listgenesets/:text
   def listGeneSets( text: String ) = Action {
     val gs = geneSetsFromText( text )
-    Ok( views.html.geneSetList( gs, geneSetQueryForm ) )
+    Ok( views.html.geneSetList( gs.mapValues(gs => gs -> whichClustersAreEnrichedInGeneSet(gs)), geneSetQueryForm ) )
   }
 
   // POST /listgenesets/
@@ -61,7 +61,7 @@ object Application extends Controller {
 
             val selectedGeneSets = GeneData.predefinedGeneSets.filter( x => keywords.exists( y => x._1.toUpperCase.indexOf( y ) != -1 ) )
 
-            Ok( views.html.geneSetList( selectedGeneSets, geneSetQueryForm.bindFromRequest ) )
+            Ok( views.html.geneSetList( selectedGeneSets.mapValues(gs => gs -> whichClustersAreEnrichedInGeneSet(gs)), geneSetQueryForm.bindFromRequest ) )
           }
         }
 
@@ -109,10 +109,7 @@ object Application extends Controller {
           case None => getImagePromise( genes, name.toString )
         }
 
-        val enrichmentResults: Traversable[Tuple2[Cluster, EnrichmentResult]] = GeneData.enrichmentTests.filter( tup => tup._1._2 == geneSet.name ).map { tup =>
-          val cl = clusters.find( _.id == tup._1._1.id )
-          cl.map( x => x -> tup._2 )
-        }.filter( _.isDefined ).map( _.get )
+        val enrichmentResults = whichClustersAreEnrichedInGeneSet(geneSet)
 
         Async {
           promiseOfImage.orTimeout( "Oops", 120000 ).map { either =>
@@ -208,6 +205,11 @@ object Application extends Controller {
   private val SeparatorCharacters = Set( ':', ',', ';', '\n', '\r', 13.toByte.toChar, 10.toByte.toChar, ' ' )
 
   private val CacheExpiryTime = current.configuration.getInt( "hiv24.cacheExpiryInSec" ).getOrElse(60*60)
+
+  private def whichClustersAreEnrichedInGeneSet(geneSet:GeneSet) : Traversable[Tuple2[Cluster, EnrichmentResult]] = GeneData.enrichmentTests.filter( tup => tup._1._2 == geneSet.name ).map { tup =>
+          val cl = clusters.find( _.id == tup._1._1.id )
+          cl.map( x => x -> tup._2 )
+        }.filter( _.isDefined ).map( _.get )
 
 }
 

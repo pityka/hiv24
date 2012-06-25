@@ -1,4 +1,4 @@
-@(geneSets:Map[String,hiv24.GeneSet], queryForm:Form[Option[String]])
+@(geneSets:Map[String,Tuple2[hiv24.GeneSet,Traversable[Tuple2[hiv24.Cluster, hiv24.EnrichmentResult]]]], queryForm:Form[Option[String]])
 
 @import hiv24._
 @import views.html.helper._
@@ -15,13 +15,17 @@
   <thead>
     <tr>
       <th>Gene classes</th>
+      <th>Enriched clusters</th>
     </tr>
   </thead>
   <tbody>
-  @geneSets.keys.toSeq.sorted.map{ gs =>
+  @geneSets.toSeq.sortBy(_._1).map{ tup =>
 	
 	<tr>
-      <td><a href="@routes.Application.showGeneSet(gs)">@gs</a></td>      
+      <td><a href="@routes.Application.showGeneSet(tup._1)">@tup._1</a></td>      
+      <td>
+        <span class="badge @(if(tup._2._2.size > 0) "badge-important") ">@tup._2._2.size</span>
+      </td>
     </tr>
 
 }

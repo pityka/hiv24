@@ -10,15 +10,19 @@ form: Form[Tuple2[String,Option[String]]])
 @main("Show Genes") {
 
 
-          <ul class="nav nav-pills">
-            <li><a href="#enrichment">Enrichment results</a></li>
-            <li><a href="#expr">Gene expression results</a></li>
+
+</script>
+
+
+          <ul class="nav nav-tabs">            
+            <li class="active"><a href="#expr"  data-toggle="tab">Gene expression results</a></li>
+            <li><a href="#enrichment" data-toggle="tab">Enrichment results</a></li>
           </ul>
 
 
-        
+        <div class="tab-content">
 
-<div id="enrichment">
+<div class="tab-pane" id="enrichment">
 
 @enrichmentPerCluster.map{ enrch =>
 
@@ -33,10 +37,12 @@ form: Form[Tuple2[String,Option[String]]])
 }
 </div>
 
-<div id="expr">
+<div class="tab-pane active" id="expr">
     
 @views.html.renderGenes(genes,imageB64,form)
 </div>
 
+<!-- tab content end -->
+</div>
     
 }
