@@ -34,7 +34,7 @@
   <tbody>
   	@data._2.toSeq.sortBy(_._1.name).map { res =>
     <tr>
-      <td><a href="@routes.Application.showGeneSet(res._1.name)">@res._1.name</a></td>
+      <td><a href="@routes.Application.showGeneSet(res._1.name)">@res._1.name.replace('_',' '</a></td>
       <td>@res._1.dataBase</td>
       <td>@res._2.logP</td>
       <td>@res._2.qVal</td>
