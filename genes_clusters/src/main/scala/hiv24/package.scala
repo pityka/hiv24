@@ -19,8 +19,8 @@ package object hiv24 {
     names.map { geneName =>
       val id = geneName._1
 
-      val ensemble = geneName._2( 'ESN_ID )
-      val sym = geneName._2( 'Symbol )
+      val ensemble = new String(geneName._2( 'ESN_ID ))
+      val sym = new String(geneName._2( 'Symbol ))
       val expression: Map[Symbol, String] = expressions( id )
 
       val exprMapHIV = Map[Int, Double](
@@ -60,7 +60,7 @@ package object hiv24 {
     val genesMap = genes.groupBy( _.pejId ).mapValues( _.head )
     geneSetFile.getLines.map { line =>
       val spl = mybiotools.fastSplitSeparator( line, '\t' )
-      val name = spl.head
+      val name = new String(spl.head)//.replaceAll("\""," ").trim
       val set = spl.tail.map { pejid =>
         val pejidInt = pejid.toInt
         genesMap.get( pejidInt )

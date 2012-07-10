@@ -5,10 +5,15 @@
 @import views.html.helper._
 @implicitField = @{ FieldConstructor(fieldConstructor.f) }
 
-<div>
+<div style="margin-bottom:20px">
 <h6>Gene expression pattern</h1>
 
 <img src="data:image/png;base64,@imageB64">
+
+<small style="color:#666;"><b>Figure:</b> Temporal expression patterns were grouped into clusters with differential expression profiles at
+three phases of the viral life cycle, namely reverse transcription, integration, and late phase.
+Boxplots on the left show the distribution of the normalized regression weights for each viral phase used in clustering.
+Expression change pattern of each gene over time is plotted for mock and HIV samples (dotted orange lines) along with the cluster median (bold red line).</small>
 
 </div>
 
@@ -24,7 +29,7 @@
 @inputText(geneInputForm("idList"))
     
     </div>
-    <div class="pull-right">
+    <div class="pull-right" style="margin-bottom:2px">
     <i class="icon-download"></i>
     <input type="submit" class="btn btn-primary" value="Get table as CSV">
     </div>

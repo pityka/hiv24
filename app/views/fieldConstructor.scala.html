@@ -8,5 +8,8 @@
         @if(elements.args.get('_showConstraints) == Some("true")) {
         <span class="help-inline">@elements.infos.mkString(", ")</span> 
         }
+        @if(elements.args.get('_blockHelp).isDefined) {
+        <p class="help-block">@elements.args.get('_blockHelp).get</p> 
+        }
     </div>
 </div>

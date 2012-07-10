@@ -39,9 +39,13 @@ The temporal patterns of the viral life cycle were used to explain the host geno
           <fieldset>
           <legend>Look up a cluster</legend>
           @select(clusterForm("clusterID"),clusters.map(x => (x.id.toString,x.name.toString)).toSeq, '_label -> "",'_showConstraints -> "false") 
-          </fieldset>
+
+          <span class="help-block">The cluster code characters ‘+’ and ‘−’ mark significant upregulation and downregulation, respectively, while ‘o’  indicates no significant deviation from zero.</small>
           
-          <input type="submit" value="Submit" class="btn">
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+          </fieldset>
           
       }
     </div>
@@ -51,16 +55,20 @@ The temporal patterns of the viral life cycle were used to explain the host geno
       <fieldset>    
               <legend>Search a custom set of genes</legend>
 
-      @textarea(geneInputForm("idList"), '_label->"",'placeholder->"List of genes (HGNC Gene Symbol or Ensembl Gene ID)",'class->"input-xlarge", 'cols -> "20", 'rows -> "10" )
+      @textarea(geneInputForm("idList"), '_label->"",'placeholder->"List of genes (HGNC Gene Symbol or Ensembl Gene ID). miRNA names should be noted as: hsa-mir-[number] (eg. hsa-mir-29a)",'class->"input-xlarge", 'cols -> "20", 'rows -> "10" )
+
+                <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
       </fieldset>
 
-      <input type="submit" value="Submit" class="btn">
 
      }
     </div>
 
     <div class="span4">
-    <legend>Browse the predefined classes</legend>
+    <legend>Browse the predefined gene sets and pathways (Keggs, GO, Reactome, HIV collections)
+</legend>
 
      @views.html.filterForm(queryForm)
 
