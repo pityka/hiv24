@@ -11,6 +11,7 @@ import javax.xml.bind.DatatypeConverter
 import play.api.Play.current
 import play.api.data.Forms._
 import play.api.data._
+import play.api.cache.{Cache,Cached}
 
 object Application extends Controller {
 
@@ -34,8 +35,10 @@ object Application extends Controller {
     Ok( views.html.about() )
   }
 
-  def index = Action {
+  def index = Cached("index") {
+    Action {
     Ok( views.html.index( clusters, clusterSelectForm, geneInputForm, geneSetQueryForm ) )
+  }
   }
 
   // GET /geneset
@@ -69,12 +72,14 @@ object Application extends Controller {
   }
 
   // POST /cluster/
-  def showClusterFromForm = Action { implicit request =>
+  def showClusterFromForm  =  Cached(request => request.toString){
+    Action { implicit request =>
     clusterSelectForm.bindFromRequest.fold(
       errors => BadRequest,
       cluster => {
         showClusterHelper( cluster )
       } )
+    }
   }
 
   // GET /cluster/:ID
