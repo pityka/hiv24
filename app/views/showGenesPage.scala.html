@@ -1,5 +1,5 @@
 @(genes: Traversable[hiv24.Gene],
- imageB64: String,
+ imageB64: Option[String],
   enrichmentPerCluster: Traversable[Tuple2[hiv24.Cluster,
   Traversable[Tuple2[hiv24.GeneSet,hiv24.EnrichmentResult]]]],
 enrichmentPerGeneSet: Traversable[Tuple2[hiv24.GeneSet,Traversable[Tuple2[hiv24.Cluster,hiv24.EnrichmentResult]]]],
@@ -10,15 +10,18 @@ form: Form[Tuple2[String,Option[String]]])
 @main("Show Genes") {
 
 
-          <ul class="nav nav-tabs">            
-            <li class="active"><a href="#expr"  data-toggle="tab">Gene expression results</a></li>
-            <li><a href="#enrichment" data-toggle="tab">Enrichment results</a></li>
+          <ul class="nav nav-tabs">      
+          @imageB64.map{ image =>
+      
+            <li class=" @(if (imageB64.isDefined) "active" else "" ) "><a href="#expr"  data-toggle="tab">Gene expression results</a></li>
+        }
+            <li class=" @(if (!imageB64.isDefined) "active" else "" ) "><a href="#enrichment" data-toggle="tab">Enrichment results</a></li>
           </ul>
 
 
         <div class="tab-content">
 
-<div class="tab-pane" id="enrichment">
+<div class="tab-pane @(if (!imageB64.isDefined) "active" else "" )" id="enrichment">
 
 @enrichmentPerCluster.map{ enrch =>
 
@@ -33,10 +36,11 @@ form: Form[Tuple2[String,Option[String]]])
 }
 </div>
 
-<div class="tab-pane active" id="expr">
-    
-@views.html.renderGenes(genes,imageB64,form)
+@imageB64.map{ image =>
+<div class="tab-pane @(if (imageB64.isDefined) "active" else "" )" id="expr">  
+@views.html.renderGenes(genes,image,form)
 </div>
+}
 
 <!-- tab content end -->
 </div>

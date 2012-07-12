@@ -29,7 +29,7 @@ object Application extends Controller {
   val geneSetQueryForm = Form(
     "keywords" -> optional( text ) )
 
-  val clusters = GeneData.genes.filter(_.cluster.isDefined).map( _.cluster.get ).distinct.sortBy( _.id )
+  val clusters : Seq[Cluster] = GeneData.clusterNames.map(x => Cluster(x._1,x._2)).toSeq
 
   def about = Action {
     Ok( views.html.about() )
@@ -37,7 +37,7 @@ object Application extends Controller {
 
   def index = Cached("index") {
     Action {
-    Ok( views.html.index( clusters, clusterSelectForm, geneInputForm, geneSetQueryForm ) )
+    Ok( views.html.index( clusters.sortBy(x => GeneData.clusterDisplayOrder(x.id)), clusterSelectForm, geneInputForm, geneSetQueryForm ) )
   }
   }
 
@@ -71,7 +71,7 @@ object Application extends Controller {
       } )
   }
 
-  // POST /cluster/
+  // GET /cluster/
   def showClusterFromForm  =  Cached(request => request.toString){
     Action { implicit request =>
     clusterSelectForm.bindFromRequest.fold(
@@ -121,7 +121,7 @@ object Application extends Controller {
             either.fold(
               image => {
                 play.api.cache.Cache.set( "predef"+name, image, CacheExpiryTime )
-                Ok( views.html.showGenesPage( genes, image, Nil, List( ( geneSet, enrichmentResults ) ), bindGenesToForm( genes ) ) )
+                Ok( views.html.showGenesPage( genes, Some(image), Nil, List( ( geneSet, enrichmentResults ) ), bindGenesToForm( genes ) ) )
               },
               timeout => InternalServerError( "timeout" ) )
           }
@@ -153,7 +153,7 @@ object Application extends Controller {
       Async {
         promiseOfImage.orTimeout( "Oops", 120000 ).map { either =>
           either.fold(
-            image => Ok( views.html.showGenesPage( genes, image, Nil, Nil, bindGenesToForm( genes ) ) ),
+            image => Ok( views.html.showGenesPage( genes, Some(image), Nil, Nil, bindGenesToForm( genes ) ) ),
             timeout => InternalServerError( "timeout" ) )
         }
       }
@@ -171,12 +171,16 @@ object Application extends Controller {
   }
 
   private def showClusterHelper( cluster: Cluster ): Result = {
-    val genes = GeneData.genes.filter( _.cluster == Some(cluster) )
-    if ( genes.size > 0 ) {
-      val promiseOfImage: Promise[String] = play.api.cache.Cache.get( cluster.id.toString ) match {
-        case Some( x ) => Promise.pure( x.asInstanceOf[String] )
-        case None => getImagePromise( genes, "C"+cluster.id.toString )
+    val genes = GeneData.genes.filter( _.cluster == cluster )    
+
+      val promiseOfImage: Promise[Option[String]] = if (genes.size > 0) {
+        play.api.cache.Cache.get( cluster.id.toString ) match {
+        case Some( x ) => Promise.pure( Some(x.asInstanceOf[String]) )
+        case None => getImagePromise( genes, "C"+cluster.id.toString ).map(x => Some(x))
       }
+    } else {
+      Promise.pure(None)
+    }
 
       val enrichmentResults: Traversable[Tuple2[GeneSet, EnrichmentResult]] = GeneData.enrichmentTests.filter( tup => tup._1._1 == cluster ).map { tup =>
         val gset = GeneData.predefinedGeneSets.get( tup._1._2 )
@@ -187,18 +191,15 @@ object Application extends Controller {
         promiseOfImage.orTimeout( "Oops", 120000 ).map { either =>
           either.fold(
             image => {
-              play.api.cache.Cache.set( cluster.id.toString, image )
+              image.foreach(x => play.api.cache.Cache.set( cluster.id.toString, x ))
               Ok( views.html.showGenesPage( genes, image, List( ( cluster, enrichmentResults ) ), Nil, bindGenesToForm( genes ) ) )
             },
             timeout => InternalServerError( "timeout" ) )
         }
       }
-    } else {
-      NotFound( views.html.emptyPage() )
-    }
   }
 
-  private def renderCSV( genes: Traversable[Gene] ) = genes.map( g => List( g.ensembleId, g.name, g.cluster.map(_.name).getOrElse(-1) ).mkString( "," ) ).mkString( "\n" )
+  private def renderCSV( genes: Traversable[Gene] ) = genes.map( g => List( g.ensembleId, g.name, g.cluster.name ).mkString( "," ) ).mkString( "\n" )
 
   private def bindGenesToForm( genes: Traversable[Gene] ) = geneInputForm.bind( Map( "idList" -> genes.map( _.ensembleId ).mkString( ":" ), "format" -> "csv" ) )
 

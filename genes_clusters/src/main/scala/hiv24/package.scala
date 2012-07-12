@@ -47,7 +47,11 @@ package object hiv24 {
         20 -> expression( Symbol( "20M" ) ).toDouble,
         22 -> expression( Symbol( "22M" ) ).toDouble )
 
-      val cluster = clusterFileContent.get( id ).map( x => Cluster( x.apply( 'Cluster_ID ).toInt, clusterNameFileContent(x.apply( 'Cluster_ID ).toInt)('Cluster_Name)) )
+      val cluster = clusterFileContent.get( id ) match {
+        case Some(x) => Cluster( x.apply( 'Cluster_ID ).toInt, clusterNameFileContent(x.apply( 'Cluster_ID ).toInt)('Cluster_Name))
+        case None => Cluster(-1,"NA")
+      } 
+
       val revTr = clusterFileContent.get( id.toString ).map( _.apply( Symbol( "RevTr." ) ).toDouble )
       val intgr = clusterFileContent.get( id.toString ).map( _.apply( Symbol( "Intgr." ) ).toDouble )
       val late = clusterFileContent.get( id.toString ).map( _.apply( Symbol( "Late" ) ).toDouble )
@@ -259,9 +263,9 @@ package object hiv24 {
       "Intgr.",
       "Late" )
     val choiceFormat = new java.text.ChoiceFormat( limits, choices );
-    // Create example data
+
     val data = new DataTable( classOf[RichDouble], classOf[RichDouble], classOf[RichDouble] );
-    genes.filter( _.cluster.isDefined ).foreach { gene =>
+    genes.filter( _.cluster.id != -1 ).foreach { gene =>
 
       data.add( new RichDouble( gene.revtr.get ), new RichDouble( gene.intgr.get ), new RichDouble( gene.late.get ) );
     }

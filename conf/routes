@@ -18,7 +18,7 @@ POST	/genes 						controllers.Application.listGenesFromForm
 
 # Show a cluster
 GET 	/cluster/:id 			controllers.Application.showCluster(id: Int)
-POST	/cluster 				controllers.Application.showClusterFromForm
+GET 	/cluster 				controllers.Application.showClusterFromForm
 
 GET /about							controllers.Application.about
 
