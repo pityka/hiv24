@@ -16,7 +16,10 @@ object GeneData {
 
   private val enrichmentTestsFile = Source.fromURL( getClass.getResource(current.configuration.getString( "hiv24.enrichmentTestsFile" ).get ))
 
-  private val geneSetFiles = play.api.Configuration.unapply( current.configuration ).get.getStringList( "hiv24.predefinedGeneSets" ).toArray.toList.asInstanceOf[List[String]].map( x => x -> Source.fromURL(getClass.getResource( x) ) )
+  private val geneSetFiles = play.api.Configuration.unapply( current.configuration ).get.getStringList( "hiv24.predefinedGeneSets" ).toArray.toList.asInstanceOf[List[String]].map{ x => 
+    play.api.Logger.info("Reading "+x)
+     x -> Source.fromURL(getClass.getResource( x) ) 
+    } 
 
   private val clusterNameFile = Source.fromURL( getClass.getResource(current.configuration.getString( "hiv24.clusterNameFile" ).get ))
 
