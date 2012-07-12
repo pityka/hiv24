@@ -4,11 +4,12 @@ import mybiotools.readTable
 
 package object hiv24 {
 
+
   def readNameExpressionClusterFiles(
     name: Source,
     expr: Source,
     clusterFile: Source,
-    clusterNameFile:Source ): List[Gene] = {
+    clusterNameFile:Source): Tuple2[List[Gene],Seq[Tuple2[Cluster,Set[Cluster]]]] = {
     val names = readTableAsMap[String]( name, key = 'Pej_ID, sep = "\\t+" )
     val expressions = readTableAsMap[String]( expr, key = 'Pej_ID, sep = "\\t+" )
 
@@ -16,7 +17,15 @@ package object hiv24 {
 
     val clusterNameFileContent = readTableAsMap[Int]( clusterNameFile, key = 'Cluster_ID, sep = "\\t+" )( _.toInt )
 
-    names.map { geneName =>
+    val metaclusters : Seq[Tuple2[Cluster,Set[Cluster]]] = {
+      clusterNameFileContent.values.map{ cl =>
+        val mainCluster = Cluster(cl('Cluster_ID).toInt,cl('Cluster_Name))
+        val subClusters = if (cl('Meta) == "-") Set[Cluster](mainCluster) else cl('Meta).split(":").map( id => Cluster(id.toInt,clusterNameFileContent(id.toInt)('Cluster_Name))).toSet
+        (mainCluster,subClusters)
+      }.toSeq
+    }
+
+    (names.map { geneName =>
       val id = geneName._1
 
       val ensemble = new String(geneName._2( 'ESN_ID ))
@@ -49,7 +58,7 @@ package object hiv24 {
 
       val cluster = clusterFileContent.get( id ) match {
         case Some(x) => Cluster( x.apply( 'Cluster_ID ).toInt, clusterNameFileContent(x.apply( 'Cluster_ID ).toInt)('Cluster_Name))
-        case None => Cluster(-1,"NA")
+        case None => Cluster(19,"NonAssociatedWithProgression")
       } 
 
       val revTr = clusterFileContent.get( id.toString ).map( _.apply( Symbol( "RevTr." ) ).toDouble )
@@ -57,7 +66,7 @@ package object hiv24 {
       val late = clusterFileContent.get( id.toString ).map( _.apply( Symbol( "Late" ) ).toDouble )
 
       Gene( id.toInt, ensemble, sym, exprMapMock, exprMapHIV, cluster, revTr, intgr, late )
-    }.toList
+    }.toList,metaclusters)
   }
 
   def readGeneSets( geneSetFile: Source, genes: Traversable[Gene], dbName: String ): List[GeneSet] = {
@@ -265,7 +274,7 @@ package object hiv24 {
     val choiceFormat = new java.text.ChoiceFormat( limits, choices );
 
     val data = new DataTable( classOf[RichDouble], classOf[RichDouble], classOf[RichDouble] );
-    genes.filter( _.cluster.id != -1 ).foreach { gene =>
+    genes.filter( _.revtr.isDefined ).foreach { gene =>
 
       data.add( new RichDouble( gene.revtr.get ), new RichDouble( gene.intgr.get ), new RichDouble( gene.late.get ) );
     }

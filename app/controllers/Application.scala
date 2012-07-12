@@ -29,15 +29,13 @@ object Application extends Controller {
   val geneSetQueryForm = Form(
     "keywords" -> optional( text ) )
 
-  val clusters : Seq[Cluster] = GeneData.clusterNames.map(x => Cluster(x._1,x._2)).toSeq
-
   def about = Action {
     Ok( views.html.about() )
   }
 
   def index = Cached("index") {
     Action {
-    Ok( views.html.index( clusters.sortBy(x => GeneData.clusterDisplayOrder(x.id)), clusterSelectForm, geneInputForm, geneSetQueryForm ) )
+    Ok( views.html.index( GeneData.genesByCluster.keys.toSeq.sortBy(x => GeneData.clusterDisplayOrder(x.id)), clusterSelectForm, geneInputForm, geneSetQueryForm ) )
   }
   }
 
@@ -171,12 +169,12 @@ object Application extends Controller {
   }
 
   private def showClusterHelper( cluster: Cluster ): Result = {
-    val genes = GeneData.genes.filter( _.cluster == cluster )    
+    val genes = GeneData.genesByCluster(cluster)
 
       val promiseOfImage: Promise[Option[String]] = if (genes.size > 0) {
         play.api.cache.Cache.get( cluster.id.toString ) match {
         case Some( x ) => Promise.pure( Some(x.asInstanceOf[String]) )
-        case None => getImagePromise( genes, "C"+cluster.id.toString ).map(x => Some(x))
+        case None => getImagePromise( genes, cluster.name.toString ).map(x => Some(x))
       }
     } else {
       Promise.pure(None)
@@ -213,7 +211,7 @@ object Application extends Controller {
   private val CacheExpiryTime = current.configuration.getInt( "hiv24.cacheExpiryInSec" ).getOrElse(60*60)
 
   private def whichClustersAreEnrichedInGeneSet(geneSet:GeneSet) : Traversable[Tuple2[Cluster, EnrichmentResult]] = GeneData.enrichmentTests.filter( tup => tup._1._2 == geneSet.name ).map { tup =>
-          val cl = clusters.find( _.id == tup._1._1.id )
+          val cl = GeneData.genesByCluster.keys.find( _.id == tup._1._1.id )
           cl.map( x => x -> tup._2 )
         }.filter( _.isDefined ).map( _.get )
 

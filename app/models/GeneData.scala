@@ -26,7 +26,17 @@ object GeneData {
 
   private val clusterNameFile = Source.fromURL( getClass.getResource(current.configuration.getString( "hiv24.clusterNameFile" ).get ))
 
-  val genes = readNameExpressionClusterFiles( nameFile, expressionsFile, clustersFile, clusterNameFile )
+  private val tmptup = readNameExpressionClusterFiles( nameFile, expressionsFile, clustersFile, clusterNameFile )
+
+  val genes = tmptup._1
+
+  val metaClusters = tmptup._2
+
+  val genesByCluster : Map[Cluster,Set[Gene]] = metaClusters.map{ t =>
+    t._1 -> t._2.map{ cluster =>
+      genes.filter(_.cluster == cluster).toSet
+    }.reduce(_ ++ _)
+  }.toMap
 
   val predefinedGeneSets: Map[String, GeneSet] = geneSetFiles.map { x =>
     val geneSetFile = x._2
