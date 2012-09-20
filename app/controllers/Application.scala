@@ -15,6 +15,10 @@ import play.api.cache.{Cache,Cached}
 
 object Application extends Controller {
 
+  def ping = Action {
+    Ok("ittvagyok")
+  }
+
   val clusterSelectForm = Form(
     mapping(
       "clusterID" -> number )(
