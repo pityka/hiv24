@@ -22,6 +22,7 @@ GET 	/cluster 				controllers.Application.showClusterFromForm
 
 GET /about							controllers.Application.about
 
+HEAD /ping						controllers.Application.ping
 GET /ping						controllers.Application.ping
 
 
