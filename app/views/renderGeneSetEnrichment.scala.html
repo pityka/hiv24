@@ -7,6 +7,10 @@
     <tr>
       <th>Cluster</th>
       <th>log(P)</th>
+      <th>Qvalue</th>
+      <th>Observed in Background</th>
+      <th>Observed in Cluster</th>
+      <th>Expected in Cluster</th>
     </tr>
   </thead>
   <tbody>
@@ -14,8 +18,11 @@
     <tr>
       <td><a href="@routes.Application.showCluster(res._1.id)">@res._1.name.toString</a></td>
       <td>@res._2.logP</td>
+      <td>@res._2.qVal</td>
+      <td>@res._2.countInBackground</td>
+      <td>@res._2.countInCluster</td>
+      <td>@res._2.expectedCount</td>
     </tr>
 }
   </tbody>
 </table>
-    
