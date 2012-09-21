@@ -58,7 +58,7 @@ package object hiv24 {
 
       val cluster = clusterFileContent.get( id ) match {
         case Some(x) => Cluster( x.apply( 'Cluster_ID ).toInt, clusterNameFileContent(x.apply( 'Cluster_ID ).toInt)('Cluster_Name))
-        case None => Cluster(19,"NonAssociatedWithProgression")
+        case None => Cluster(220,"NonAssociatedWithProgression")
       } 
 
       val revTr = clusterFileContent.get( id.toString ).map( _.apply( Symbol( "RevTr." ) ).toDouble )
@@ -82,7 +82,7 @@ package object hiv24 {
     }.toList
   }
 
-  def readEnrichmentFile( enrichmentFile: Source ): Map[Tuple2[Cluster, String], EnrichmentResult] = {
+  def readEnrichmentFile( enrichmentFile: Source, clusterNames: Map[Int,String] ): Map[Tuple2[Cluster, String], EnrichmentResult] = {
     Map( readTable( enrichmentFile, header = true, sep = "\\t+" ).map { line =>
       val enrich = EnrichmentResult( logP = line( Symbol( "log10(Pval)" ) ) match {
         case x if x == "-Inf" => Double.MinValue
@@ -94,7 +94,7 @@ package object hiv24 {
         expectedCount = line( 'ExpectedCount ).toDouble,
         countInCluster = line( 'CountinCluster ).toDouble,
         sourceURL = line( 'SourceUrl ) )
-      ( Cluster(line( 'ClusterID ).toInt,line('ClusterName)), line( 'SetName ) ) -> enrich
+      ( Cluster(line( 'ClusterID ).toInt,clusterNames(line('ClusterID).toInt)), line( 'SetName ) ) -> enrich
     }.toSeq: _* )
 
   }

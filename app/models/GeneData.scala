@@ -44,8 +44,6 @@ object GeneData {
     readGeneSets( geneSetFile, genes, dbname )
   }.flatten.groupBy( _.name ).mapValues( _.head )
 
-  val enrichmentTests: Map[Tuple2[Cluster, String], EnrichmentResult] = enrichmentTestsFiles.map(readEnrichmentFile).reduce(_ ++ _)
-
   private val clusterNamesAndOrder : Map[Int,Tuple2[String,Int]] = 
     readTableAsMap[Int]( 
       Source.fromURL( getClass.getResource(current.configuration.getString( "hiv24.clusterNameFile" ).get )),
@@ -55,6 +53,9 @@ object GeneData {
 
   val clusterNames = clusterNamesAndOrder.mapValues(_._1)
   val clusterDisplayOrder = clusterNamesAndOrder.mapValues(_._2)
+
+    val enrichmentTests: Map[Tuple2[Cluster, String], EnrichmentResult] = enrichmentTestsFiles.map(readEnrichmentFile(_,clusterNames)).reduce(_ ++ _)
+
 
 
 }

@@ -11,7 +11,7 @@ revtr: Option[Double],
 intgr: Option[Double],
 late: Option[Double] )
 
-case class Cluster(id:Int,name:String)
+case class Cluster(id:Int,name:String) 
 
 case class GeneSet(name:String, dataBase:String, set: Set[Gene]) 
 
