@@ -7,4 +7,4 @@ resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/release
 resolvers += Resolver.file("Project local repo", file("repository/local/"))(Resolver.ivyStylePatterns)
 
 // Use the Play sbt plugin for Play projects
-addSbtPlugin("play" % "sbt-plugin" % "2.0-RC3-SNAPSHOT")
+addSbtPlugin("play" % "sbt-plugin" % "2.0.3")
