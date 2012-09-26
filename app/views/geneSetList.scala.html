@@ -22,7 +22,7 @@
   @geneSets.toSeq.sortBy(_._1).map{ tup =>
 	
 	<tr>
-      <td><a href="@routes.Application.showGeneSet(tup._1)">@tup._1</a></td>      
+      <td><a href="@routes.Application.showGeneSet(java.net.URLEncoder.encode(tup._1,"utf-8"))">@tup._1</a></td>      
       <td>
         <span class="badge @(if(tup._2._2.size > 0) "badge-important") ">@tup._2._2.size</span>
       </td>
