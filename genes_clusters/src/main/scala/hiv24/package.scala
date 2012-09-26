@@ -129,6 +129,8 @@ package object hiv24 {
 
     def createPlot( dat: Traversable[Map[Int, Double]], maxY: Double, minY: Double, title: String ): XYPlot = {
 
+      if (!dat.isEmpty) {
+
       val seriesHIV = dat.map { gene =>
         val ser = new DataTable( classOf[scala.runtime.RichInt], classOf[scala.runtime.RichDouble] )
         gene.toSeq.sortBy( _._1 ).foreach( tuple => ser.add( new RichInt( tuple._1 ), new RichDouble( tuple._2 ) ) )
@@ -222,10 +224,13 @@ package object hiv24 {
       plotHIV.setSetting( Plot.TITLE_FONT, titlefont )
 
       plotHIV
+      } else {
+        new XYPlot(  )
+      }
     }
-
-    val maxY = genes.map( x => x.expressionHIV.map( _._2 ).toList ::: x.expressionMock.map( _._2 ).toList ).flatten.max
-    val minY = genes.map( x => x.expressionHIV.map( _._2 ).toList ::: x.expressionMock.map( _._2 ).toList ).flatten.min
+    if (!genes.isEmpty) {
+    val maxY = (genes.map( x => x.expressionHIV.map( _._2 ).toList ::: x.expressionMock.map( _._2 ).toList )).flatten.max
+    val minY = (genes.map( x => x.expressionHIV.map( _._2 ).toList ::: x.expressionMock.map( _._2 ).toList )).flatten.min
 
     val hivplot = createPlot( genes.map( _.expressionHIV ), maxY, minY, "HIV" )
     val mockplot = createPlot( genes.map( _.expressionMock ), maxY, minY, "Mock" )
@@ -255,6 +260,9 @@ package object hiv24 {
     container.add( hivplot );
 
     container
+    } else {
+      new DrawableContainer( new TableLayout( 3 ) );
+    }
 
   }
 
