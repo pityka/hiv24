@@ -2,6 +2,9 @@ import play.api._
 import play.api.mvc._
 import play.api.mvc.Results._
 
+import com.newrelic.api.agent.NewRelic
+import scala.collection.JavaConversions._
+
 trait GlobalCommon extends GlobalSettings {
 
   override def onStart( app: Application ) {
@@ -21,6 +24,7 @@ object GlobalDev extends GlobalCommon
 object GlobalProd extends GlobalCommon {
 
   override def onError( request: RequestHeader, ex: Throwable ) = {
+    NewRelic.noticeError(ex, request.queryString.mapValues(_.toString))
     InternalServerError
   }
 
