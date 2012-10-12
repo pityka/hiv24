@@ -1,6 +1,9 @@
+v2.9.0
+  * Support Key Transactions feature
 v2.8.0
-  * Add proxy_user and proxy_password settings
-  * More varied transaction traces
+  * Supports basic proxy authentication for the case where there is a proxy server between the agent and the Internet. 
+    The configuration uses proxy_user and proxy_password settings.
+  * To avoid reporting the same transaction trace repeatedly, the agent reports a number of the slowest transactions.
   * bug fix: Transaction trace reported to wrong app if enable_auto_app_naming and browser requested a transaction trace
 v2.7.0
   * Add skipTransactionTrace element to @Trace annotation to tell Agent to drop method from transaction trace
