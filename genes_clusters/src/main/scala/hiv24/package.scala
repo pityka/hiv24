@@ -132,8 +132,8 @@ package object hiv24 {
       if (!dat.isEmpty) {
 
       val seriesHIV = dat.map { gene =>
-        val ser = new DataTable( classOf[scala.runtime.RichInt], classOf[scala.runtime.RichDouble] )
-        gene.toSeq.sortBy( _._1 ).foreach( tuple => ser.add( new RichInt( tuple._1 ), new RichDouble( tuple._2 ) ) )
+        val ser = new DataTable( classOf[java.lang.Double], classOf[java.lang.Double] )
+        gene.toSeq.sortBy( _._1 ).foreach( tuple => ser.add( ( tuple._1 ), ( tuple._2 ) ) )
 
         ser
       }
@@ -146,15 +146,15 @@ package object hiv24 {
         i -> sum / dat.size.toDouble
       }
 
-      val avgserHIV = new DataTable( classOf[scala.runtime.RichInt], classOf[scala.runtime.RichDouble] )
-      avgHIV.toSeq.sortBy( _._1 ).foreach( tup => avgserHIV.add( new RichInt( tup._1 ), new RichDouble( tup._2 ) ) )
+      val avgserHIV = new DataTable( classOf[java.lang.Double], classOf[java.lang.Double] )
+      avgHIV.toSeq.sortBy( _._1 ).foreach( tup => avgserHIV.add( ( tup._1 ), ( tup._2 ) ) )
 
-      val upperDashedLine = new DataTable( classOf[scala.runtime.RichInt], classOf[scala.runtime.RichDouble] )
-      upperDashedLine.add( new RichInt( minX ), new RichDouble( 1.0 ) )
-      upperDashedLine.add( new RichInt( maxX ), new RichDouble( 1.0 ) )
-      val lowerDashedLine = new DataTable( classOf[scala.runtime.RichInt], classOf[scala.runtime.RichDouble] )
-      lowerDashedLine.add( new RichInt( minX ), new RichDouble( -1.0 ) )
-      lowerDashedLine.add( new RichInt( maxX ), new RichDouble( -1.0 ) )
+      val upperDashedLine = new DataTable( classOf[java.lang.Double], classOf[java.lang.Double] )
+      upperDashedLine.add( ( minX ), ( 1.0 ) )
+      upperDashedLine.add( ( maxX ), ( 1.0 ) )
+      val lowerDashedLine = new DataTable( classOf[java.lang.Double], classOf[java.lang.Double] )
+      lowerDashedLine.add( ( minX ), ( -1.0 ) )
+      lowerDashedLine.add( ( maxX ), ( -1.0 ) )
 
       val color = new Color( 1.0f, 0.3f, 0.0f, 0.5f );
 
@@ -281,10 +281,10 @@ package object hiv24 {
       "Late" )
     val choiceFormat = new java.text.ChoiceFormat( limits, choices );
 
-    val data = new DataTable( classOf[RichDouble], classOf[RichDouble], classOf[RichDouble] );
+    val data = new DataTable( classOf[java.lang.Double], classOf[java.lang.Double], classOf[java.lang.Double] );
     genes.filter( _.revtr.isDefined ).foreach { gene =>
 
-      data.add( new RichDouble( gene.revtr.get ), new RichDouble( gene.intgr.get ), new RichDouble( gene.late.get ) );
+      data.add( ( gene.revtr.get ), ( gene.intgr.get ), ( gene.late.get ) );
     }
 
     // Create new box-and-whisker plot
