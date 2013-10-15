@@ -20,7 +20,8 @@ resolvers ++= Seq(
 lazy val genes_clusters =
         project.in( file("genes_clusters") )
    .settings(
-     libraryDependencies += "pityu" %% "commons" % "4.1.0" exclude("org.specs2", "specs2_2.10.0-RC1")
+     libraryDependencies += "pityu" %% "commons" % "4.1.0" exclude("org.specs2", "specs2_2.10.0-RC1"),
+     resolvers ++= resolvers.value
    )
 
 lazy val root =
