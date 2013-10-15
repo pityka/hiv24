@@ -1,1 +1,1 @@
-web: target/start -Dhttp.port=${PORT} ${JAVA_OPTS}
+web: target/universal/stage/bin/guava-web -Dhttp.port=$PORT $CONF_OVERRIDE
