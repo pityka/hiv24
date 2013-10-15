@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/guava-web -Dhttp.port=$PORT $CONF_OVERRIDE
+web: target/universal/stage/bin/hiv24 -Dhttp.port=$PORT $CONF_OVERRIDE
