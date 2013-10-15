@@ -7,21 +7,23 @@ libraryDependencies ++= Seq(
    cache
 )     
 
-resolvers ++= Seq(
-	 Resolver.file("LocalIvy", file(Path.userHome +"/.ivy2/local"))(Resolver.ivyStylePatterns),
+lazy val MyResolvers = Seq(
+   Resolver.file("LocalIvy", file(Path.userHome +"/.ivy2/local"))(Resolver.ivyStylePatterns),
    "LocalMaven" at "file:///"+Path.userHome+"/.ivy2/local",
-	 "Cloudbees Private" at "https://repository-pityka.forge.cloudbees.com/snapshot/",
-	 "Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases",
+   "Cloudbees Private" at "https://repository-pityka.forge.cloudbees.com/snapshot/",
+   "Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases",
    "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-	 "Twitter" at "http://maven.twttr.com/",
+   "Twitter" at "http://maven.twttr.com/",
    "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
-	 )
+   )
+
+resolvers ++= MyResolvers
 
 lazy val genes_clusters =
         project.in( file("genes_clusters") )
    .settings(
      libraryDependencies += "pityu" %% "commons" % "4.1.0" exclude("org.specs2", "specs2_2.10.0-RC1"),
-     resolvers ++= resolvers.value
+     resolvers ++= MyResolvers
    )
 
 lazy val root =
