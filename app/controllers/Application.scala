@@ -112,6 +112,7 @@ object Application extends Controller {
     render.async {
       case Accepts.Html() => showGenesHelper(genes)
       case Accepts.Json() => showGenesImage(genes)
+      case x if x.accepts("application/png") => showGenesImageBinary(genes)
     }
 
   }
@@ -147,15 +148,17 @@ object Application extends Controller {
     ids.map(x => GeneData.genes.find(y => y.ensembleId.toUpperCase == x || y.name.toUpperCase == x)).filter(_.isDefined).map(_.get).toSet
   }
 
-  private def getImagePromise(genes: Traversable[Gene], name: String): Future[String] = {
+  private def getImagePromise(genes: Traversable[Gene], name: String): Future[String] =
+    getImagePromiseBinary(genes, name).map(x => DatatypeConverter.printBase64Binary(x))
+
+  private def getImagePromiseBinary(genes: Traversable[Gene], name: String): Future[Array[Byte]] = {
     Future {
       val factory = DrawableWriterFactory.getInstance();
       val writer = factory.get("image/png");
       val plot = createTimeLinePlot(genes, name)
       val bs = new ByteArrayOutputStream()
       writer.write(plot, bs, 900, 300);
-
-      DatatypeConverter.printBase64Binary(bs.toByteArray)
+      bs.toByteArray
     }
   }
 
@@ -178,6 +181,21 @@ object Application extends Controller {
 
       model.TimeoutFuture(25 seconds)(promiseOfImage.map {
         image => Ok(Json.obj(("image" -> image)))
+      }).recover({
+        case _: Throwable => InternalServerError
+      })
+
+    } else {
+      Future { NotFound }
+    }
+  }
+
+  private def showGenesImageBinary(genes: Traversable[Gene])(implicit request: Request[_]): Future[SimpleResult] = {
+    if (genes.size > 0) {
+      val promiseOfImage = getImagePromiseBinary(genes, "Custom geneset")
+
+      model.TimeoutFuture(25 seconds)(promiseOfImage.map {
+        image => Ok(image).as("application/png")
       }).recover({
         case _: Throwable => InternalServerError
       })
