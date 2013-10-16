@@ -112,8 +112,13 @@ object Application extends Controller {
     render.async {
       case Accepts.Html() => showGenesHelper(genes)
       case Accepts.Json() => showGenesImage(genes)
-      case x if x.accepts("application/png") => showGenesImageBinary(genes)
     }
+  }
+
+  // GET /genespng/:list
+  def listGenesPNG(list: String) = Action.async { implicit request =>
+    val genes = geneSetFromString(list)
+    showGenesImageBinary(genes)
 
   }
 
