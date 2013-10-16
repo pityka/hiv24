@@ -184,7 +184,7 @@ object Application extends Controller {
 
   private def showGenesImage(genes: Traversable[Gene])(implicit request: Request[_]): Future[SimpleResult] = {
     if (genes.size > 0) {
-      val promiseOfImage = getImagePromise(genes, "Custom geneset")
+      val promiseOfImage = getImagePromise(genes, if (genes.size == 1) genes.head.name else "Custom geneset")
 
       model.TimeoutFuture(25 seconds)(promiseOfImage.map {
         image => Ok(Json.obj(("image" -> image)))
@@ -199,7 +199,7 @@ object Application extends Controller {
 
   private def showGenesImageBinary(genes: Traversable[Gene])(implicit request: Request[_]): Future[SimpleResult] = {
     if (genes.size > 0) {
-      val promiseOfImage = getImagePromiseBinary(genes, "Custom geneset")
+      val promiseOfImage = getImagePromiseBinary(genes, if (genes.size == 1) genes.head.name else "Custom geneset")
 
       model.TimeoutFuture(25 seconds)(promiseOfImage.map {
         image => Ok(image).as("application/png")
