@@ -116,9 +116,11 @@ object Application extends Controller {
   }
 
   // GET /genespng/:list
-  def listGenesPNG(list: String) = Action.async { implicit request =>
-    val genes = geneSetFromString(list)
-    showGenesImageBinary(genes)
+  def listGenesPNG(list: String) = Cached(s"png$list") {
+    Action.async { implicit request =>
+      val genes = geneSetFromString(list)
+      showGenesImageBinary(genes)
+    }
 
   }
 
