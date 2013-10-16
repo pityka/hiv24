@@ -202,7 +202,7 @@ object Application extends Controller {
       val promiseOfImage = getImagePromiseBinary(genes, if (genes.size == 1) genes.head.name else "Custom geneset")
 
       model.TimeoutFuture(25 seconds)(promiseOfImage.map {
-        image => Ok(image).as("application/png")
+        image => Ok(image).as("image/png")
       }).recover({
         case _: Throwable => InternalServerError
       })
