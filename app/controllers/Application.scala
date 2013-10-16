@@ -164,7 +164,7 @@ object Application extends Controller {
 
   private def showGenesHelper(genes: Traversable[Gene])(implicit request: Request[_]): Future[SimpleResult] = {
     if (genes.size > 0) {
-      val promiseOfImage = getImagePromise(genes, "Custom geneset")
+      val promiseOfImage = getImagePromise(genes, if (genes.size == 1) genes.head.name else "Custom geneset")
       model.TimeoutFuture(25 seconds)(promiseOfImage.map {
         image => Ok(views.html.showGenesPage(genes, Some(image), Nil, Nil, bindGenesToForm(genes)))
       }).recover({
