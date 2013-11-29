@@ -116,10 +116,10 @@ object Application extends Controller {
   }
 
   // GET /genespng/:list
-  def listGenesPNG(list: String) = Cached(s"png$list") {
+  def listGenesPNG(list: String, pdf: Option[Boolean] = None) = Cached(s"png$list$pdf") {
     Action.async { implicit request =>
       val genes = geneSetFromString(list)
-      showGenesImageBinary(genes)
+      showGenesImageBinary(genes, pdf.getOrElse(false))
     }
 
   }
@@ -158,14 +158,11 @@ object Application extends Controller {
   private def getImagePromise(genes: Traversable[Gene], name: String): Future[String] =
     getImagePromiseBinary(genes, name).map(x => DatatypeConverter.printBase64Binary(x))
 
-  private def getImagePromiseBinary(genes: Traversable[Gene], name: String): Future[Array[Byte]] = {
+  private def getImagePromiseBinary(genes: Traversable[Gene], name: String, pdf: Boolean = false): Future[Array[Byte]] = {
     Future {
-      val factory = DrawableWriterFactory.getInstance();
-      val writer = factory.get("image/png");
-      val plot = createTimeLinePlot(genes, name)
-      val bs = new ByteArrayOutputStream()
-      writer.write(plot, bs, 900, 300);
-      bs.toByteArray
+      mybiotools.plots.renderToByteArray(
+        createTimeLinePlot(genes, name),
+        if (pdf) "application/pdf" else "image/png", 2.0)
     }
   }
 
@@ -197,18 +194,18 @@ object Application extends Controller {
     }
   }
 
-  private def showGenesImageBinary(genes: Traversable[Gene])(implicit request: Request[_]): Future[SimpleResult] = {
+  private def showGenesImageBinary(genes: Traversable[Gene], pdf: Boolean = false)(implicit request: Request[_]): Future[SimpleResult] = {
     if (genes.size > 0) {
-      val promiseOfImage = getImagePromiseBinary(genes, if (genes.size == 1) genes.head.name else "Custom geneset")
+      val promiseOfImage = getImagePromiseBinary(genes, if (genes.size == 1) genes.head.name else "Custom geneset", pdf)
 
       model.TimeoutFuture(25 seconds)(promiseOfImage.map {
-        image => Ok(image).as("image/png")
+        image => Ok(image).as(if (pdf) "application/pdf" else "image/png")
       }).recover({
         case _: Throwable => InternalServerError
       })
 
     } else {
-      Future { NotFound }
+      Future.successful { NotFound }
     }
   }
 

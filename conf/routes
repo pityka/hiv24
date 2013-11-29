@@ -16,7 +16,7 @@ POST	/listgenesets 				controllers.Application.queryGeneSets
 GET     /genes/:list              controllers.Application.listGenes(list: String)
 POST	/genes 						controllers.Application.listGenesFromForm
 
-GET     /genespng/:list              controllers.Application.listGenesPNG(list: String)
+GET     /genespng/:list             controllers.Application.listGenesPNG(list: String,pdf:Option[Boolean])
 
 # Show a cluster
 GET 	/cluster/:id 			controllers.Application.showCluster(id: Int)

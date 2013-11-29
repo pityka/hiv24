@@ -255,6 +255,8 @@ package object hiv24 {
     val boxplot = createBoxPlot( genes, title )
 
     val container = new DrawableContainer( new TableLayout( 3 ) );
+    
+    container.setBounds(new java.awt.geom.Rectangle2D.Double(0.0, 0.0, 900.0, 300.0))
     container.add( boxplot )
     container.add( mockplot );
     container.add( hivplot );
