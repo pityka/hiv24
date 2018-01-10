@@ -3,7 +3,6 @@ name := "hiv24-web"
 version := "1.0-SNAPSHOT"
 
 libraryDependencies ++= Seq(
-   "pityu" %% "commons" % "4.1.0" exclude("org.specs2", "specs2_2.10.0-RC1"),
    cache
 )     
 
@@ -21,10 +20,7 @@ resolvers ++= MyResolvers
 
 lazy val genes_clusters =
         project.in( file("genes_clusters") )
-   .settings(
-     libraryDependencies += "pityu" %% "commons" % "4.1.0" exclude("org.specs2", "specs2_2.10.0-RC1"),
-     resolvers ++= MyResolvers
-   )
+   
 
 lazy val root =
         project.in( file(".") )
